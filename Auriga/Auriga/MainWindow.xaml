@@ -5,12 +5,12 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:gxc="http://schemas.panthernet.ru/graphx/"
         xmlns:local="clr-namespace:Auriga"
-        xmlns:local1="clr-namespace:Auriga.Views"
+        xmlns:views="clr-namespace:Auriga.Views"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
         <gxc:ZoomControl x:Name="main_zoomctrl">
-            <local1:GraphAreaControl x:Name="main_area"/>
+            <views:GraphAreaControl x:Name="main_area"/>
         </gxc:ZoomControl>
     </Grid>
 </Window>

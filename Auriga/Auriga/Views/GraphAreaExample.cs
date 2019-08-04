@@ -11,39 +11,44 @@ using System.Threading.Tasks;
 namespace Auriga.Views
 {
     //Graph data class
-    public class GraphExample : BidirectionalGraph<DataVertex, DataEdge> { }
+    public class GraphExample : BidirectionalGraph<IncludeGraphNode, IncludeGraphEdge> { }
 
     //Logic core class
-    public class GXLogicCoreExample : GXLogicCore<DataVertex, DataEdge, BidirectionalGraph<DataVertex, DataEdge>> { }
+    public class GXLogicCoreExample : GXLogicCore<IncludeGraphNode, IncludeGraphEdge, BidirectionalGraph<IncludeGraphNode, IncludeGraphEdge>> { }
 
     //Vertex data object
-    public class DataVertex : VertexBase
+    public class IncludeGraphNode : VertexBase
     {
-        /// <summary>
-        /// Some string property for example purposes
-        /// </summary>
-        public string Text { get; set; }
+        public string FullPath { get; set; }
+        public string Name { get; set; }
+
+        public IncludeGraphNode(int id, string fullPath, string name)
+        {
+            ID = id;
+            FullPath = fullPath;
+            Name = name;
+        }
 
         public override string ToString()
         {
-            return Text;
+            return Name;
         }
     }
 
     //Edge data object
-    public class DataEdge : EdgeBase<DataVertex>
+    public class IncludeGraphEdge : EdgeBase<IncludeGraphNode>
     {
-        public DataEdge(DataVertex source, DataVertex target, double weight = 1)
+        public IncludeGraphEdge(IncludeGraphNode source, IncludeGraphNode target, double weight = 1)
             : base(source, target, weight)
         {
         }
 
-        public DataEdge()
+        public IncludeGraphEdge()
             : base(null, null, 1)
         {
         }
 
-        public string Text { get; set; }
+        public string Text => $"{Source} -> {Target}";
 
         public override string ToString()
         {

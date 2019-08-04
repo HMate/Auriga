@@ -20,7 +20,7 @@ using System.Windows.Shapes;
 
 namespace Auriga.Views
 {
-    public class GraphAreaControl : GraphArea<DataVertex, DataEdge, BidirectionalGraph<DataVertex, DataEdge>>
+    public class GraphAreaControl : GraphArea<IncludeGraphNode, IncludeGraphEdge, BidirectionalGraph<IncludeGraphNode, IncludeGraphEdge>>
     {
         static GraphAreaControl()
         {
@@ -29,75 +29,82 @@ namespace Auriga.Views
 
         public GraphAreaControl()
         {
-            var graph = GenerateRandomGraph();
-            LayoutGraph(graph);
+            var graph = GenerateCyclicGraph();
+            LayoutGraph();
+            GenerateGraph(graph);
         }
 
         private GraphExample GenerateRandomGraph()
         {
-            Random Rand = new Random();
-
-            //Create data graph object
             var graph = new GraphExample();
 
-            //Create and add vertices using some DataSource for ID's
-            foreach (var item in GenerateItems(100))
-                graph.AddVertex(new DataVertex() { ID = item.ID, Text = item.Text });
+            var nodes = new List<IncludeGraphNode>();
+            nodes.Add(new IncludeGraphNode(0, "path/root/main.cpp", "main.cpp"));
+            nodes.Add(new IncludeGraphNode(1, "path/root/lib/lib.h", "lib.h"));
+            nodes.Add(new IncludeGraphNode(2, "path/root/lib/io.h", "io.h"));
+            nodes.Add(new IncludeGraphNode(3, "path/root/utils/str.h", "str.h"));
+            nodes.Add(new IncludeGraphNode(4, "path/root/utils/bytes.h", "bytes.h"));
+            nodes.Add(new IncludeGraphNode(5, "path/root/utils/array.h", "array.h"));
+            nodes.Add(new IncludeGraphNode(6, "path/root/lib/io.h", "io.h"));
 
-            var vlist = graph.Vertices.ToList();
-            //Generate random edges for the vertices
-            foreach (var item in vlist)
-            {
-                if (Rand.Next(0, 50) > 25)
-                    continue;
+            graph.AddVertexRange(nodes);
 
-                var vertex2 = vlist[Rand.Next(0, graph.VertexCount - 1)];
-                graph.AddEdge(new DataEdge(item, vertex2, Rand.Next(1, 50))
-                {
-                    Text = $"{item} -> {vertex2}"
-                });
-            }
+            graph.AddEdge(new IncludeGraphEdge(nodes[0], nodes[1]));
+            graph.AddEdge(new IncludeGraphEdge(nodes[1], nodes[2]));
+            graph.AddEdge(new IncludeGraphEdge(nodes[0], nodes[6]));
+            graph.AddEdge(new IncludeGraphEdge(nodes[2], nodes[3]));
+            graph.AddEdge(new IncludeGraphEdge(nodes[3], nodes[4]));
+            graph.AddEdge(new IncludeGraphEdge(nodes[3], nodes[5]));
 
             return graph;
         }
 
-        private void LayoutGraph(GraphExample graph)
+        private GraphExample GenerateCyclicGraph()
+        {
+            var graph = new GraphExample();
+
+            var nodes = new List<IncludeGraphNode>();
+            nodes.Add(new IncludeGraphNode(0, "path/root/main.cpp", "main.cpp"));
+            nodes.Add(new IncludeGraphNode(1, "path/root/lib/lib.h", "lib.h"));
+            nodes.Add(new IncludeGraphNode(2, "path/root/lib/io.h", "io.h"));
+            nodes.Add(new IncludeGraphNode(3, "path/root/utils/str.h", "str.h"));
+            nodes.Add(new IncludeGraphNode(4, "path/root/utils/bytes.h", "bytes.h"));
+            nodes.Add(new IncludeGraphNode(5, "path/root/utils/array.h", "array.h"));
+
+            graph.AddVertexRange(nodes);
+
+            graph.AddEdge(new IncludeGraphEdge(nodes[0], nodes[1]));
+            graph.AddEdge(new IncludeGraphEdge(nodes[1], nodes[2]));
+            graph.AddEdge(new IncludeGraphEdge(nodes[0], nodes[2]));
+            graph.AddEdge(new IncludeGraphEdge(nodes[2], nodes[3]));
+            graph.AddEdge(new IncludeGraphEdge(nodes[3], nodes[4]));
+            graph.AddEdge(new IncludeGraphEdge(nodes[3], nodes[5]));
+            graph.AddEdge(new IncludeGraphEdge(nodes[4], nodes[2]));
+
+            return graph;
+        }
+
+        private void LayoutGraph()
         {
             var logic = new GXLogicCoreExample();
-            logic.DefaultLayoutAlgorithm = LayoutAlgorithmTypeEnum.KK;
+            logic.DefaultLayoutAlgorithm = LayoutAlgorithmTypeEnum.EfficientSugiyama;
             logic.DefaultLayoutAlgorithmParams =
-                               logic.AlgorithmFactory.CreateLayoutParameters(LayoutAlgorithmTypeEnum.KK);
-            ((KKLayoutParameters)logic.DefaultLayoutAlgorithmParams).MaxIterations = 100;
+                               logic.AlgorithmFactory.CreateLayoutParameters(logic.DefaultLayoutAlgorithm);
+            EfficientSugiyamaLayoutParameters parameters = (EfficientSugiyamaLayoutParameters)logic.DefaultLayoutAlgorithmParams;
+            parameters.Direction = LayoutDirection.TopToBottom;
+            parameters.EdgeRouting = SugiyamaEdgeRoutings.Traditional;
 
             logic.DefaultOverlapRemovalAlgorithm = OverlapRemovalAlgorithmTypeEnum.FSA;
             logic.DefaultOverlapRemovalAlgorithmParams =
-                              logic.AlgorithmFactory.CreateOverlapRemovalParameters(OverlapRemovalAlgorithmTypeEnum.FSA);
-            ((OverlapRemovalParameters)logic.DefaultOverlapRemovalAlgorithmParams).HorizontalGap = 50;
-            ((OverlapRemovalParameters)logic.DefaultOverlapRemovalAlgorithmParams).VerticalGap = 50;
+                              logic.AlgorithmFactory.CreateOverlapRemovalParameters(logic.DefaultOverlapRemovalAlgorithm);
+            OverlapRemovalParameters overlap = (OverlapRemovalParameters)logic.DefaultOverlapRemovalAlgorithmParams;
+            overlap.HorizontalGap = 50;
+            overlap.VerticalGap = 50;
 
             logic.DefaultEdgeRoutingAlgorithm = EdgeRoutingAlgorithmTypeEnum.SimpleER;
             logic.AsyncAlgorithmCompute = false;
 
             LogicCore = logic;
-
-            GenerateGraph(graph);
-        }
-
-
-        private IEnumerable<ExampleItem> GenerateItems(int count)
-        {
-            var items = new List<ExampleItem>();
-            for (int i = 0; i < count; i++)
-            {
-                items.Add(new ExampleItem { ID = i, Text = $"Item_{i}" });
-            }
-            return items;
-        }
-
-        public struct ExampleItem
-        {
-            public long ID;
-            public string Text;
         }
     }
 }
