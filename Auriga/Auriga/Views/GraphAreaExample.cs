@@ -10,10 +10,6 @@ using System.Threading.Tasks;
 
 namespace Auriga.Views
 {
-    public partial class GraphAreaExample : GraphArea<DataVertex, DataEdge, BidirectionalGraph<DataVertex, DataEdge>>
-    {
-    }
-
     //Graph data class
     public class GraphExample : BidirectionalGraph<DataVertex, DataEdge> { }
 
