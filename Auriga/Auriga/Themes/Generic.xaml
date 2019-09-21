@@ -17,7 +17,7 @@
         </Setter>-->
     </Style>
 
-    <Style TargetType="{x:Type local:GraphEditorArea}">
+    <Style TargetType="local:GraphEditorArea">
         <Setter Property="Background" Value="White" />
     </Style>
 </ResourceDictionary>

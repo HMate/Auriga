@@ -24,15 +24,30 @@ namespace Auriga.Views
 
         public GraphEditorArea()
         {
+            MouseDown += GraphEditorArea_MouseDownEventHandler;
+            Children.Clear();
+        }
+
+        public void AddNode(double x, double y)
+        {
             var element = new Rectangle();
             element.Width = 100;
             element.Height = 70;
-            element.Fill = new SolidColorBrush(Colors.Yellow);
+            element.Style = (Style)(Application.Current.TryFindResource("defaultNodeStyle"));
 
-            Canvas.SetLeft(element, 30);
-            Canvas.SetTop(element, 60);
+            Canvas.SetLeft(element, x - element.Width/2);
+            Canvas.SetTop(element, y - element.Height/2);
 
             Children.Add(element);
+        }
+
+        public void GraphEditorArea_MouseDownEventHandler(object sender, MouseButtonEventArgs e)
+        {
+            if(e.ChangedButton == MouseButton.Left)
+            {
+                Point pos = e.GetPosition(this);
+                AddNode(pos.X, pos.Y);
+            }
         }
     }
 }

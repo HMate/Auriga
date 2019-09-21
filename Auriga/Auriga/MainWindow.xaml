@@ -19,7 +19,7 @@
             <views:GraphViewer />
         </DataTemplate>
         <DataTemplate DataType="{x:Type views:GraphEditor}">
-            <views:GraphViewer />
+            <views:GraphEditor />
         </DataTemplate>
     </Window.Resources>
 

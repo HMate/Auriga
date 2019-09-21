@@ -4,6 +4,10 @@
              xmlns:local="clr-namespace:Auriga"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-         
+        <Style x:Key="defaultNodeStyle">
+            <Setter Property="Shape.Fill" Value="LightGreen"/>
+            <Setter Property="Shape.Stroke" Value="DarkGreen"/>
+            <Setter Property="Shape.StrokeThickness" Value="3"/>
+        </Style>
     </Application.Resources>
 </Application>
