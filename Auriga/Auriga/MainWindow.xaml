@@ -15,8 +15,11 @@
         <DataTemplate DataType="{x:Type views:DefaultView}">
             <views:DefaultView />
         </DataTemplate>
+        <DataTemplate DataType="{x:Type views:GraphViewer}">
+            <views:GraphViewer />
+        </DataTemplate>
         <DataTemplate DataType="{x:Type views:GraphEditor}">
-            <views:GraphEditor />
+            <views:GraphViewer />
         </DataTemplate>
     </Window.Resources>
 

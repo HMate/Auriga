@@ -79,6 +79,10 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Common\RelayCommand.cs" />
+    <Compile Include="Views\GraphEditor.xaml.cs">
+      <DependentUpon>GraphEditor.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\GraphEditorArea.cs" />
     <Compile Include="Views\ICentralView.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="Views\DefaultView.xaml.cs">
@@ -86,8 +90,8 @@
     </Compile>
     <Compile Include="Views\GraphAreaControl.cs" />
     <Compile Include="Views\GraphAreaExample.cs" />
-    <Compile Include="Views\GraphEditor.xaml.cs">
-      <DependentUpon>GraphEditor.xaml</DependentUpon>
+    <Compile Include="Views\GraphViewer.xaml.cs">
+      <DependentUpon>GraphViewer.xaml</DependentUpon>
     </Compile>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -110,6 +114,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\GraphEditor.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\GraphViewer.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

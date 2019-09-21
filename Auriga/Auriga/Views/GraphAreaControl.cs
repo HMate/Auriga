@@ -98,7 +98,7 @@ namespace Auriga.Views
             logic.DefaultOverlapRemovalAlgorithmParams =
                               logic.AlgorithmFactory.CreateOverlapRemovalParameters(logic.DefaultOverlapRemovalAlgorithm);
             OverlapRemovalParameters overlap = (OverlapRemovalParameters)logic.DefaultOverlapRemovalAlgorithmParams;
-            overlap.HorizontalGap = 50;
+            overlap.HorizontalGap = 150;
             overlap.VerticalGap = 50;
 
             logic.DefaultEdgeRoutingAlgorithm = EdgeRoutingAlgorithmTypeEnum.SimpleER;

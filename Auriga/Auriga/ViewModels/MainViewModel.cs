@@ -30,13 +30,8 @@ namespace Auriga.ViewModels
             CurrentCentralView = new DefaultView();
         }
 
-        public ICommand ShowGraphEditor
-        {
-            get
-            {
-                return new RelayCommand(p => CurrentCentralView = new GraphEditor());
-            }
-        }
+        public ICommand ShowGraphViewer => new RelayCommand(p => CurrentCentralView = new GraphViewer());
+        public ICommand ShowGraphEditor => new RelayCommand(p => CurrentCentralView = new GraphEditor());
 
         public event PropertyChangedEventHandler PropertyChanged;
     }

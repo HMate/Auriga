@@ -16,11 +16,11 @@ using System.Windows.Shapes;
 namespace Auriga.Views
 {
     /// <summary>
-    /// Interaction logic for DefaultView.xaml
+    /// Interaction logic for GraphEditor.xaml
     /// </summary>
-    public partial class DefaultView : UserControl, ICentralView
+    public partial class GraphViewer : UserControl, ICentralView
     {
-        public DefaultView()
+        public GraphViewer()
         {
             InitializeComponent();
         }
