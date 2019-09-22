@@ -30,13 +30,11 @@ namespace Auriga.Views
 
         public void AddNode(double x, double y)
         {
-            var element = new Rectangle();
-            element.Width = 100;
-            element.Height = 70;
-            element.Style = (Style)(Application.Current.TryFindResource("defaultNodeStyle"));
+            var element = new GraphNode("Default Name");
 
-            Canvas.SetLeft(element, x - element.Width/2);
-            Canvas.SetTop(element, y - element.Height/2);
+            // TODO: Width,Height Are Nan here, figure out how could we compute them
+            SetLeft(element, x - 50);
+            SetTop(element, y - 10);
 
             Children.Add(element);
         }

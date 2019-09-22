@@ -1,4 +1,5 @@
-﻿using GraphX.Controls;
+﻿using Auriga.ViewModels;
+using GraphX.Controls;
 using GraphX.PCL.Common.Enums;
 using GraphX.PCL.Logic.Algorithms.LayoutAlgorithms;
 using GraphX.PCL.Logic.Algorithms.OverlapRemoval;

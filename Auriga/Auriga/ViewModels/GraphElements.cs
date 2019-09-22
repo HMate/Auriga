@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Auriga.Views
+namespace Auriga.ViewModels
 {
     //Graph data class
     public class GraphExample : BidirectionalGraph<IncludeGraphNode, IncludeGraphEdge> { }

@@ -2,12 +2,14 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:Auriga"
+             xmlns:views="clr-namespace:Auriga.Views"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-        <Style x:Key="defaultNodeStyle">
+        <Style x:Key="nodeStyle">
             <Setter Property="Shape.Fill" Value="LightGreen"/>
             <Setter Property="Shape.Stroke" Value="DarkGreen"/>
             <Setter Property="Shape.StrokeThickness" Value="3"/>
+            <Setter Property="TextBlock.FontSize" Value="22" />
         </Style>
     </Application.Resources>
 </Application>

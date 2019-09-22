@@ -1,0 +1,16 @@
+﻿<UserControl x:Class="Auriga.Views.GraphNode"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Auriga.Views"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid>
+        <Rectangle x:Name="Box" Style="{StaticResource nodeStyle}"/>
+        <TextBlock x:Name="NameText" Text="{Binding NodeName, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:GraphNode}}}" 
+                   VerticalAlignment="Center" HorizontalAlignment="Center" 
+                   IsManipulationEnabled="True" Style="{StaticResource nodeStyle}" 
+                   Margin="50, 20" MinWidth="50" MinHeight="23"/>
+    </Grid>
+</UserControl>

@@ -83,13 +83,16 @@
       <DependentUpon>GraphEditor.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\GraphEditorArea.cs" />
+    <Compile Include="Views\GraphNode.xaml.cs">
+      <DependentUpon>GraphNode.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\ICentralView.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="Views\DefaultView.xaml.cs">
       <DependentUpon>DefaultView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\GraphAreaControl.cs" />
-    <Compile Include="Views\GraphAreaExample.cs" />
+    <Compile Include="ViewModels\GraphElements.cs" />
     <Compile Include="Views\GraphViewer.xaml.cs">
       <DependentUpon>GraphViewer.xaml</DependentUpon>
     </Compile>
@@ -114,6 +117,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\GraphEditor.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\GraphNode.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

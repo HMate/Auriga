@@ -11,18 +11,6 @@
         <model:MainViewModel />
     </Window.DataContext>
 
-    <Window.Resources>
-        <DataTemplate DataType="{x:Type views:DefaultView}">
-            <views:DefaultView />
-        </DataTemplate>
-        <DataTemplate DataType="{x:Type views:GraphViewer}">
-            <views:GraphViewer />
-        </DataTemplate>
-        <DataTemplate DataType="{x:Type views:GraphEditor}">
-            <views:GraphEditor />
-        </DataTemplate>
-    </Window.Resources>
-
     <Grid>
         <ContentControl Content="{Binding CurrentCentralView}" />
     </Grid>
