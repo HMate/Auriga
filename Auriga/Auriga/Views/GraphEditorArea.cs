@@ -25,26 +25,62 @@ namespace Auriga.Views
         public GraphEditorArea()
         {
             MouseDown += GraphEditorArea_MouseDownEventHandler;
+            MouseUp += GraphEditorArea_MouseUpEventHandler;
+            MouseLeave += GraphEditorArea_MouseLeaveEventHandler;
+            MouseMove += GraphEditorArea_MouseMoveEventHandler;
             Children.Clear();
         }
 
-        public void AddNode(double x, double y)
+        public void AddNode(Point pos)
         {
             var element = new GraphNode("Default Name");
 
             // TODO: Width,Height Are Nan here, figure out how could we compute them
-            SetLeft(element, x - 50);
-            SetTop(element, y - 10);
+            SetLeft(element, pos.X - 50);
+            SetTop(element, pos.Y - 10);
 
             Children.Add(element);
         }
+
+        private GraphNode movingNode;
+        private Point moveStartNodePosOffset;
 
         public void GraphEditorArea_MouseDownEventHandler(object sender, MouseButtonEventArgs e)
         {
             if(e.ChangedButton == MouseButton.Left)
             {
-                Point pos = e.GetPosition(this);
-                AddNode(pos.X, pos.Y);
+                if(e.Source is GraphNode node)
+                {
+                    movingNode = node;
+                    moveStartNodePosOffset = e.GetPosition(node);
+                }
+                else
+                {
+                    AddNode(e.GetPosition(this));
+                }
+            }
+        }
+
+        public void GraphEditorArea_MouseUpEventHandler(object sender, MouseButtonEventArgs e)
+        {
+            if (e.ChangedButton == MouseButton.Left)
+            {
+                movingNode = null;
+            }
+        }
+
+        public void GraphEditorArea_MouseLeaveEventHandler(object sender, MouseEventArgs e)
+        {
+            movingNode = null;
+        }
+
+        public void GraphEditorArea_MouseMoveEventHandler(object sender, MouseEventArgs e)
+        {
+            if(movingNode != null)
+            {
+                var curPos = e.GetPosition(this);
+                SetLeft(movingNode, curPos.X - moveStartNodePosOffset.X);
+                SetTop(movingNode, curPos.Y - moveStartNodePosOffset.Y);
             }
         }
     }

@@ -7,6 +7,8 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
-        <views:GraphEditorArea/>
+        <views:GraphEditorArea>
+            <views:GraphNode NodeName="Valami" Canvas.Left="100"/>
+        </views:GraphEditorArea>
     </Grid>
 </UserControl>

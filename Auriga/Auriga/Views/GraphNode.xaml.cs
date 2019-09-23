@@ -30,10 +30,9 @@ namespace Auriga.Views
             set { SetValue(NodeNameProperty, value); }
         }
 
-        public GraphNode()
+        public GraphNode() : this("Default")
         {
-            InitializeComponent();
-            NodeName = "Default";
+
         }
 
         public GraphNode(string name)
