@@ -57,7 +57,7 @@ namespace Auriga.Views
                     movingNode.IsSelected = true;
                     moveStartNodePosOffset = e.GetPosition(node);
                 }
-                else
+                else if(CreationMode == CreationModeType.Node)
                 {
                     var newNode = AddNode(e.GetPosition(this));
                     newNode.IsSelected = true;
@@ -106,5 +106,21 @@ namespace Auriga.Views
                 }
             }
         }
+
+        public enum CreationModeType
+        {
+            Node,
+            Arrow
+        }
+
+        public static readonly DependencyProperty CreationModeProperty =
+            DependencyProperty.Register("CreationMode", typeof(CreationModeType), typeof(GraphNode));
+
+        public CreationModeType CreationMode
+        {
+            get { return (CreationModeType)GetValue(CreationModeProperty); }
+            set { SetValue(CreationModeProperty, value); }
+        }
+
     }
 }

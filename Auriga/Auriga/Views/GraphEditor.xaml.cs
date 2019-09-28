@@ -24,5 +24,15 @@ namespace Auriga.Views
         {
             InitializeComponent();
         }
+
+        private void Button_SelectNodeCreationMode(object sender, RoutedEventArgs e)
+        {
+            GraphArea.CreationMode = GraphEditorArea.CreationModeType.Node;
+        }
+
+        private void Button_SelectArrowCreationMode(object sender, RoutedEventArgs e)
+        {
+            GraphArea.CreationMode = GraphEditorArea.CreationModeType.Arrow;
+        }
     }
 }

@@ -7,7 +7,19 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
-        <views:GraphEditorArea>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="100" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <ToolBarTray Grid.Column="0" Orientation="Vertical">
+            <ToolBar  Background="PaleGoldenrod" Margin="0,0,-100,0">
+                <Button ToolTip="Select to place nodes" Content="Node" Click="Button_SelectNodeCreationMode"/>
+                <Button ToolTip="Select to place arrows" Content="Arrow" Click="Button_SelectArrowCreationMode"/>
+            </ToolBar>
+        </ToolBarTray>
+        
+        <views:GraphEditorArea x:Name="GraphArea" Grid.Column="1">
             <views:GraphNode NodeName="Valami" Canvas.Left="100"/>
         </views:GraphEditorArea>
     </Grid>
