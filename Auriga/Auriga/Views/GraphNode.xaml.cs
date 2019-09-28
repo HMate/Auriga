@@ -24,10 +24,19 @@ namespace Auriga.Views
         public static readonly DependencyProperty NodeNameProperty = 
             DependencyProperty.Register("NodeName", typeof(string), typeof(GraphNode));
 
+        public static readonly DependencyProperty IsSelectedProperty =
+            DependencyProperty.Register("IsSelected", typeof(bool), typeof(GraphNode));
+
         public string NodeName
         {
             get { return (string)GetValue(NodeNameProperty); }
             set { SetValue(NodeNameProperty, value); }
+        }
+
+        public bool IsSelected
+        {
+            get { return (bool)GetValue(IsSelectedProperty); }
+            set { SetValue(IsSelectedProperty, value); }
         }
 
         public GraphNode() : this("Default")

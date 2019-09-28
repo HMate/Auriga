@@ -13,6 +13,13 @@
             <Setter Property="Control.Background" Value="LightGreen" />
             <Setter Property="Control.Foreground" Value="DarkGreen" />
             <Setter Property="TextBox.BorderBrush" Value="{x:Null}" />
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=views:GraphNode}, Path=IsSelected}"
+                             Value="True">
+                    <Setter Property="Shape.Stroke" Value="Black"/>
+                    <Setter Property="Shape.Fill" Value="YellowGreen"/>
+                </DataTrigger>
+            </Style.Triggers>
         </Style>
     </Application.Resources>
 </Application>

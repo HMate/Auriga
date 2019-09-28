@@ -31,7 +31,7 @@ namespace Auriga.Views
             Children.Clear();
         }
 
-        public void AddNode(Point pos)
+        public GraphNode AddNode(Point pos)
         {
             var element = new GraphNode("Default Name");
 
@@ -40,6 +40,7 @@ namespace Auriga.Views
             SetTop(element, pos.Y - 10);
 
             Children.Add(element);
+            return element;
         }
 
         private GraphNode movingNode;
@@ -49,14 +50,17 @@ namespace Auriga.Views
         {
             if(e.ChangedButton == MouseButton.Left)
             {
-                if(e.Source is GraphNode node)
+                UnselectAllNodes();
+                if (e.Source is GraphNode node)
                 {
                     movingNode = node;
+                    movingNode.IsSelected = true;
                     moveStartNodePosOffset = e.GetPosition(node);
                 }
                 else
                 {
-                    AddNode(e.GetPosition(this));
+                    var newNode = AddNode(e.GetPosition(this));
+                    newNode.IsSelected = true;
                 }
             }
         }
@@ -65,13 +69,13 @@ namespace Auriga.Views
         {
             if (e.ChangedButton == MouseButton.Left)
             {
-                movingNode = null;
+                StopMovingNode();
             }
         }
 
         public void GraphEditorArea_MouseLeaveEventHandler(object sender, MouseEventArgs e)
         {
-            movingNode = null;
+            StopMovingNode();
         }
 
         public void GraphEditorArea_MouseMoveEventHandler(object sender, MouseEventArgs e)
@@ -81,6 +85,25 @@ namespace Auriga.Views
                 var curPos = e.GetPosition(this);
                 SetLeft(movingNode, curPos.X - moveStartNodePosOffset.X);
                 SetTop(movingNode, curPos.Y - moveStartNodePosOffset.Y);
+            }
+        }
+
+        private void StopMovingNode()
+        {
+            if (movingNode != null)
+            {
+                movingNode = null;
+            }
+        }
+
+        private void UnselectAllNodes()
+        {
+            foreach(var child in Children)
+            {
+                if(child is GraphNode node)
+                {
+                    node.IsSelected = false;
+                }
             }
         }
     }
