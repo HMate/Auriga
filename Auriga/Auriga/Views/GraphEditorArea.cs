@@ -43,8 +43,25 @@ namespace Auriga.Views
             return element;
         }
 
+        public Line AddArrow(Point startPos)
+        {
+            var element = new Line();
+
+            element.Stroke = Brushes.Aqua;
+            element.StrokeThickness = 2;
+            element.X1 = 0;
+            element.Y1 = 0;
+            SetLeft(element, startPos.X);
+            SetTop(element, startPos.Y);
+
+            Children.Add(element);
+            return element;
+        }
+
         private GraphNode movingNode;
         private Point moveStartNodePosOffset;
+
+        private Line arrowUnderCreation;
 
         public void GraphEditorArea_MouseDownEventHandler(object sender, MouseButtonEventArgs e)
         {
@@ -62,6 +79,10 @@ namespace Auriga.Views
                     var newNode = AddNode(e.GetPosition(this));
                     newNode.IsSelected = true;
                 }
+                else if (CreationMode == CreationModeType.Arrow)
+                {
+                    arrowUnderCreation = AddArrow(e.GetPosition(this));
+                }
             }
         }
 
@@ -70,12 +91,14 @@ namespace Auriga.Views
             if (e.ChangedButton == MouseButton.Left)
             {
                 StopMovingNode();
+                arrowUnderCreation = null;
             }
         }
 
         public void GraphEditorArea_MouseLeaveEventHandler(object sender, MouseEventArgs e)
         {
             StopMovingNode();
+            arrowUnderCreation = null;
         }
 
         public void GraphEditorArea_MouseMoveEventHandler(object sender, MouseEventArgs e)
@@ -85,6 +108,14 @@ namespace Auriga.Views
                 var curPos = e.GetPosition(this);
                 SetLeft(movingNode, curPos.X - moveStartNodePosOffset.X);
                 SetTop(movingNode, curPos.Y - moveStartNodePosOffset.Y);
+            }
+            if(arrowUnderCreation != null)
+            {
+                var curPos = e.GetPosition(this);
+                var X1 = GetLeft(arrowUnderCreation);
+                var Y1 = GetTop(arrowUnderCreation);
+                arrowUnderCreation.X2 = curPos.X - X1;
+                arrowUnderCreation.Y2 = curPos.Y - Y1;
             }
         }
 
