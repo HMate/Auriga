@@ -51,9 +51,10 @@ namespace Auriga.Views
         {
             var element = new GraphNode("Default Name");
 
-            // TODO: Width,Height Are Nan here, figure out how could we compute them
-            SetLeft(element, pos.X - 50);
-            SetTop(element, pos.Y - 10);
+            // Width, Height Are Nan here, ActualWidth/H are 0, so we force compute them
+            element.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
+            SetLeft(element, pos.X - (element.DesiredSize.Width / 2d));
+            SetTop(element, pos.Y - (element.DesiredSize.Height / 2d));
 
             Children.Add(element);
             return element;
@@ -68,6 +69,7 @@ namespace Auriga.Views
                 HeadHeight = 10,
                 HeadWidth = 5
             };
+            // TODO: Better to just make arrow position to depend on box positonm instead of setting it manually.
             SetLeft(element, startPos.X);
             SetTop(element, startPos.Y);
 
@@ -87,18 +89,23 @@ namespace Auriga.Views
                 UnselectAllNodes();
                 if (e.Source is GraphNode node)
                 {
-                    movingNode = node;
-                    movingNode.IsSelected = true;
-                    moveStartNodePosOffset = e.GetPosition(node);
+                    if (CreationMode == CreationModeType.Arrow)
+                    {
+                        var arrowPos = new Point(GetLeft(node), GetTop(node));
+                        arrowPos.Offset(node.ActualWidth / 2d, node.ActualHeight);
+                        arrowUnderCreation = AddArrow(arrowPos);
+                    }
+                    else
+                    {
+                        movingNode = node;
+                        movingNode.IsSelected = true;
+                        moveStartNodePosOffset = e.GetPosition(node);
+                    }
                 }
                 else if(CreationMode == CreationModeType.Node)
                 {
                     var newNode = AddNode(e.GetPosition(this));
                     newNode.IsSelected = true;
-                }
-                else if (CreationMode == CreationModeType.Arrow)
-                {
-                    arrowUnderCreation = AddArrow(e.GetPosition(this));
                 }
             }
         }
@@ -108,6 +115,10 @@ namespace Auriga.Views
             if (e.ChangedButton == MouseButton.Left)
             {
                 StopMovingNode();
+                if (arrowUnderCreation != null && !(e.Source is GraphNode))
+                {
+                    Children.Remove(arrowUnderCreation);
+                }
                 arrowUnderCreation = null;
             }
         }
@@ -115,6 +126,10 @@ namespace Auriga.Views
         public void GraphEditorArea_MouseLeaveEventHandler(object sender, MouseEventArgs e)
         {
             StopMovingNode();
+            if (arrowUnderCreation != null)
+            {
+                Children.Remove(arrowUnderCreation);
+            }
             arrowUnderCreation = null;
         }
 
@@ -128,11 +143,21 @@ namespace Auriga.Views
             }
             if(arrowUnderCreation != null)
             {
-                var curPos = e.GetPosition(this);
-                var X1 = GetLeft(arrowUnderCreation);
-                var Y1 = GetTop(arrowUnderCreation);
-                arrowUnderCreation.X2 = curPos.X - X1;
-                arrowUnderCreation.Y2 = curPos.Y - Y1;
+                if (e.Source is GraphNode node)
+                {
+                    var nodePos = new Point(GetLeft(node), GetTop(node));
+                    nodePos.Offset(node.ActualWidth / 2d, 0);
+                    var arrowPos = new Point(GetLeft(arrowUnderCreation), GetTop(arrowUnderCreation));
+                    arrowUnderCreation.X2 = nodePos.X - arrowPos.X;
+                    arrowUnderCreation.Y2 = nodePos.Y - arrowPos.Y;
+                }
+                else
+                {
+                    var curPos = e.GetPosition(this);
+                    var arrowPos = new Point(GetLeft(arrowUnderCreation), GetTop(arrowUnderCreation));
+                    arrowUnderCreation.X2 = curPos.X - arrowPos.X;
+                    arrowUnderCreation.Y2 = curPos.Y - arrowPos.Y;
+                }
             }
         }
 
