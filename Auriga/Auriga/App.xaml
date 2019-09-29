@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:Auriga"
              xmlns:views="clr-namespace:Auriga.Views"
+             xmlns:graph="clr-namespace:Auriga.GraphControls"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
         <Style x:Key="nodeStyle">
@@ -14,7 +15,7 @@
             <Setter Property="Control.Foreground" Value="DarkGreen" />
             <Setter Property="TextBox.BorderBrush" Value="{x:Null}" />
             <Style.Triggers>
-                <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=views:GraphNode}, Path=IsSelected}"
+                <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=graph:GraphNode}, Path=IsSelected}"
                              Value="True">
                     <Setter Property="Shape.Stroke" Value="Black"/>
                     <Setter Property="Shape.Fill" Value="YellowGreen"/>

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Auriga.GraphControls;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -31,6 +32,21 @@ namespace Auriga.Views
             Children.Clear();
         }
 
+        public enum CreationModeType
+        {
+            Node,
+            Arrow
+        }
+
+        public static readonly DependencyProperty CreationModeProperty =
+            DependencyProperty.Register("CreationMode", typeof(CreationModeType), typeof(GraphEditorArea));
+
+        public CreationModeType CreationMode
+        {
+            get { return (CreationModeType)GetValue(CreationModeProperty); }
+            set { SetValue(CreationModeProperty, value); }
+        }
+
         public GraphNode AddNode(Point pos)
         {
             var element = new GraphNode("Default Name");
@@ -43,14 +59,15 @@ namespace Auriga.Views
             return element;
         }
 
-        public Line AddArrow(Point startPos)
+        public GraphArrow AddArrow(Point startPos)
         {
-            var element = new Line();
-
-            element.Stroke = Brushes.Aqua;
-            element.StrokeThickness = 2;
-            element.X1 = 0;
-            element.Y1 = 0;
+            var element = new GraphArrow
+            {
+                X1 = 0,
+                Y1 = 0,
+                HeadHeight = 10,
+                HeadWidth = 5
+            };
             SetLeft(element, startPos.X);
             SetTop(element, startPos.Y);
 
@@ -61,7 +78,7 @@ namespace Auriga.Views
         private GraphNode movingNode;
         private Point moveStartNodePosOffset;
 
-        private Line arrowUnderCreation;
+        private GraphArrow arrowUnderCreation;
 
         public void GraphEditorArea_MouseDownEventHandler(object sender, MouseButtonEventArgs e)
         {
@@ -137,21 +154,5 @@ namespace Auriga.Views
                 }
             }
         }
-
-        public enum CreationModeType
-        {
-            Node,
-            Arrow
-        }
-
-        public static readonly DependencyProperty CreationModeProperty =
-            DependencyProperty.Register("CreationMode", typeof(CreationModeType), typeof(GraphNode));
-
-        public CreationModeType CreationMode
-        {
-            get { return (CreationModeType)GetValue(CreationModeProperty); }
-            set { SetValue(CreationModeProperty, value); }
-        }
-
     }
 }

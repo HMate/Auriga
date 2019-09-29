@@ -79,11 +79,12 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Common\RelayCommand.cs" />
+    <Compile Include="GraphControls\GraphArrow.cs" />
     <Compile Include="Views\GraphEditor.xaml.cs">
       <DependentUpon>GraphEditor.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\GraphEditorArea.cs" />
-    <Compile Include="Views\GraphNode.xaml.cs">
+    <Compile Include="GraphControls\GraphNode.xaml.cs">
       <DependentUpon>GraphNode.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\ICentralView.cs" />
@@ -120,7 +121,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\GraphNode.xaml">
+    <Page Include="GraphControls\GraphNode.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

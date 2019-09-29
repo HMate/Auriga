@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:views="clr-namespace:Auriga.Views"
+             xmlns:graph="clr-namespace:Auriga.GraphControls"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
@@ -13,14 +14,13 @@
         </Grid.ColumnDefinitions>
 
         <ToolBarTray Grid.Column="0" Orientation="Vertical">
-            <ToolBar  Background="PaleGoldenrod" Margin="0,0,-100,0">
+            <ToolBar  Background="CadetBlue" Margin="0,0,-100,0">
                 <Button ToolTip="Select to place nodes" Content="Node" Click="Button_SelectNodeCreationMode"/>
                 <Button ToolTip="Select to place arrows" Content="Arrow" Click="Button_SelectArrowCreationMode"/>
             </ToolBar>
         </ToolBarTray>
         
         <views:GraphEditorArea x:Name="GraphArea" Grid.Column="1">
-            <views:GraphNode NodeName="Valami" Canvas.Left="100"/>
         </views:GraphEditorArea>
     </Grid>
 </UserControl>

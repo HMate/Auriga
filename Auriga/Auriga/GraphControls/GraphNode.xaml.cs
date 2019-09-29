@@ -14,7 +14,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Auriga.Views
+namespace Auriga.GraphControls
 {
     /// <summary>
     /// Interaction logic for GraphNode.xaml
