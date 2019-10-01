@@ -60,18 +60,16 @@ namespace Auriga.Views
             return element;
         }
 
-        public GraphArrow AddArrow(Point startPos)
+        public GraphArrow AddArrow(GraphNode node, Point curPos)
         {
             var element = new GraphArrow
             {
-                X1 = 0,
-                Y1 = 0,
                 HeadHeight = 10,
                 HeadWidth = 5
             };
-            // TODO: Better to just make arrow position to depend on box positonm instead of setting it manually.
-            SetLeft(element, startPos.X);
-            SetTop(element, startPos.Y);
+            element.SetStartNode(node);
+            // Set arrow position manually until we dont have ending box.
+            element.SetEndPoint(curPos);
 
             Children.Add(element);
             return element;
@@ -91,9 +89,7 @@ namespace Auriga.Views
                 {
                     if (CreationMode == CreationModeType.Arrow)
                     {
-                        var arrowPos = new Point(GetLeft(node), GetTop(node));
-                        arrowPos.Offset(node.ActualWidth / 2d, node.ActualHeight);
-                        arrowUnderCreation = AddArrow(arrowPos);
+                        arrowUnderCreation = AddArrow(node, e.GetPosition(this));
                     }
                     else
                     {
@@ -145,18 +141,12 @@ namespace Auriga.Views
             {
                 if (e.Source is GraphNode node)
                 {
-                    var nodePos = new Point(GetLeft(node), GetTop(node));
-                    nodePos.Offset(node.ActualWidth / 2d, 0);
-                    var arrowPos = new Point(GetLeft(arrowUnderCreation), GetTop(arrowUnderCreation));
-                    arrowUnderCreation.X2 = nodePos.X - arrowPos.X;
-                    arrowUnderCreation.Y2 = nodePos.Y - arrowPos.Y;
+                    arrowUnderCreation.SetEndNode(node);
                 }
                 else
                 {
                     var curPos = e.GetPosition(this);
-                    var arrowPos = new Point(GetLeft(arrowUnderCreation), GetTop(arrowUnderCreation));
-                    arrowUnderCreation.X2 = curPos.X - arrowPos.X;
-                    arrowUnderCreation.Y2 = curPos.Y - arrowPos.Y;
+                    arrowUnderCreation.SetEndPoint(curPos);
                 }
             }
         }

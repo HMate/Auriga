@@ -78,6 +78,55 @@ namespace Auriga.GraphControls
             set { SetValue(HeadWidthProperty, value); }
         }
 
+        private GraphNode startNode;
+        private GraphNode endNode;
+
+        public void SetStartNode(GraphNode node)
+        {
+            if (startNode != node)
+            {
+                if (startNode != null)
+                {
+                    RemoveNodePosChanged(startNode, UpdateStartPositionEventHandler);
+                }
+                startNode = node;
+                UpdateStartPositionEventHandler(null, null);
+                RegisterNodePosChanged(node, UpdateStartPositionEventHandler);
+            }
+        }
+
+        public void SetEndNode(GraphNode node)
+        {
+            if (endNode != node)
+            {
+                if(endNode != null)
+                {
+                    RemoveNodePosChanged(endNode, UpdateEndPositionEventHandler);
+                }
+
+                endNode = node;
+                UpdateEndPositionEventHandler(null, null);
+                RegisterNodePosChanged(node, UpdateEndPositionEventHandler);
+            }
+        }
+
+        public void SetEndPoint(Point end)
+        {
+            (X2, Y2) = (end.X, end.Y);
+        }
+
+        private void UpdateStartPositionEventHandler(object sender, EventArgs e)
+        {
+            Point arrowPos = startNode.GetBottomArrowAttachPoint();
+            (X1, Y1) = (arrowPos.X, arrowPos.Y);
+        }
+
+        private void UpdateEndPositionEventHandler(object sender, EventArgs e)
+        {
+            Point arrowPos = endNode.GetTopArrowAttachPoint();
+            (X2, Y2) = (arrowPos.X, arrowPos.Y);
+        }
+
         // Source: https://www.codeproject.com/Articles/23116/WPF-Arrow-and-Custom-Shapes
         protected override Geometry DefiningGeometry
         {
@@ -126,6 +175,22 @@ namespace Auriga.GraphControls
             context.LineTo(pt3, true, true);
             context.LineTo(pt2, true, true);
             context.LineTo(pt4, true, true);
+        }
+
+        private void RegisterNodePosChanged(GraphNode node, EventHandler handler)
+        {
+            var descriptorLeft = DependencyPropertyDescriptor.FromProperty(Canvas.LeftProperty, typeof(GraphNode));
+            descriptorLeft.AddValueChanged(node, handler);
+            var descriptorTop = DependencyPropertyDescriptor.FromProperty(Canvas.TopProperty, typeof(GraphNode));
+            descriptorTop.AddValueChanged(node, handler);
+        }
+
+        private void RemoveNodePosChanged(GraphNode node, EventHandler handler)
+        {
+            var descriptorLeft = DependencyPropertyDescriptor.FromProperty(Canvas.LeftProperty, typeof(GraphNode));
+            descriptorLeft.RemoveValueChanged(node, handler);
+            var descriptorTop = DependencyPropertyDescriptor.FromProperty(Canvas.TopProperty, typeof(GraphNode));
+            descriptorTop.RemoveValueChanged(node, handler);
         }
     }
 }

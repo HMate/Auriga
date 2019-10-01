@@ -49,24 +49,20 @@ namespace Auriga.GraphControls
             InitializeComponent();
             NodeName = name;
 
-            //var size = MeasureString(name);
-            //Width = size.Width;
-            //Height = size.Height;
         }
 
-        private Size MeasureString(string candidate)
+        public Point GetBottomArrowAttachPoint()
         {
-            var formattedText = new FormattedText(
-                candidate,
-                CultureInfo.CurrentCulture,
-                FlowDirection.LeftToRight,
-                new Typeface(NameText.FontFamily, NameText.FontStyle, NameText.FontWeight, NameText.FontStretch),
-                NameText.FontSize,
-                Brushes.Black,
-                new NumberSubstitution(),
-                1);
+            var arrowPos = new Point((double)GetValue(Canvas.LeftProperty), (double)GetValue(Canvas.TopProperty));
+            arrowPos.Offset(ActualWidth / 2d, ActualHeight);
+            return arrowPos;
+        }
 
-            return new Size(formattedText.Width, formattedText.Height);
+        internal Point GetTopArrowAttachPoint()
+        {
+            var arrowPos = new Point((double)GetValue(Canvas.LeftProperty), (double)GetValue(Canvas.TopProperty));
+            arrowPos.Offset(ActualWidth / 2d, 0);
+            return arrowPos;
         }
     }
 }
