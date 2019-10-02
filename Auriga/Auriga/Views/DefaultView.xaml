@@ -7,8 +7,6 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
-        <Button Content="Show GraphX" Margin="120,178,0,168" HorizontalAlignment="Left" Width="257"
-                Command="{Binding DataContext.ShowGraphViewer, RelativeSource={RelativeSource AncestorType={x:Type Window}}}" />
         <Button Content="Show Awesome" Margin="0,178,120,168" HorizontalAlignment="Right" Width="257"
                 Command="{Binding DataContext.ShowGraphEditor, RelativeSource={RelativeSource AncestorType={x:Type Window}}}"/>
     </Grid>
