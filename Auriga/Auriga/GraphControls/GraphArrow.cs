@@ -79,8 +79,8 @@ namespace Auriga.GraphControls
             set { SetValue(HeadWidthProperty, value); }
         }
 
-        private GraphNode startNode;
-        private GraphNode endNode;
+        private GraphNode? startNode;
+        private GraphNode? endNode;
 
         public void SetStartNode(GraphNode node)
         {
@@ -116,16 +116,22 @@ namespace Auriga.GraphControls
             (X2, Y2) = end;
         }
 
-        private void UpdateStartPositionEventHandler(object sender, EventArgs e)
+        private void UpdateStartPositionEventHandler(object? sender, EventArgs? e)
         {
-            Point arrowPos = startNode.GetBottomArrowAttachPoint();
-            (X1, Y1) = arrowPos;
+            if (startNode != null)
+            {
+                Point arrowPos = startNode.GetBottomArrowAttachPoint();
+                (X1, Y1) = arrowPos;
+            }
         }
 
-        private void UpdateEndPositionEventHandler(object sender, EventArgs e)
+        private void UpdateEndPositionEventHandler(object? sender, EventArgs? e)
         {
-            Point arrowPos = endNode.GetTopArrowAttachPoint();
-            (X2, Y2) = arrowPos;
+            if (endNode != null)
+            {
+                Point arrowPos = endNode!.GetTopArrowAttachPoint();
+                (X2, Y2) = arrowPos;
+            }
         }
 
         // Source: https://www.codeproject.com/Articles/23116/WPF-Arrow-and-Custom-Shapes

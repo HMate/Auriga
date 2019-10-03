@@ -75,10 +75,10 @@ namespace Auriga.Views
             return element;
         }
 
-        private GraphNode movingNode;
+        private GraphNode? movingNode;
         private Point moveStartNodePosOffset;
 
-        private GraphArrow arrowUnderCreation;
+        private GraphArrow? arrowUnderCreation;
 
         public void GraphEditorArea_MouseDownEventHandler(object sender, MouseButtonEventArgs e)
         {

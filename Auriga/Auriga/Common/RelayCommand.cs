@@ -18,7 +18,7 @@ namespace Auriga.Common
         #region Fields
 
         readonly Action<object> _execute;
-        readonly Predicate<object> _canExecute;
+        readonly Predicate<object>? _canExecute;
 
         #endregion // Fields
 
@@ -38,11 +38,8 @@ namespace Auriga.Common
         /// </summary>
         /// <param name="execute">The execution logic.</param>
         /// <param name="canExecute">The execution status logic.</param>
-        public RelayCommand(Action<object> execute, Predicate<object> canExecute)
+        public RelayCommand(Action<object> execute, Predicate<object>? canExecute)
         {
-            if (execute == null)
-                throw new ArgumentNullException("execute");
-
             _execute = execute;
             _canExecute = canExecute;
         }
