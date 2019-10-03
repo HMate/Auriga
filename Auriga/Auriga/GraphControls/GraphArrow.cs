@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Auriga.Common;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -112,19 +113,19 @@ namespace Auriga.GraphControls
 
         public void SetEndPoint(Point end)
         {
-            (X2, Y2) = (end.X, end.Y);
+            (X2, Y2) = end;
         }
 
         private void UpdateStartPositionEventHandler(object sender, EventArgs e)
         {
             Point arrowPos = startNode.GetBottomArrowAttachPoint();
-            (X1, Y1) = (arrowPos.X, arrowPos.Y);
+            (X1, Y1) = arrowPos;
         }
 
         private void UpdateEndPositionEventHandler(object sender, EventArgs e)
         {
             Point arrowPos = endNode.GetTopArrowAttachPoint();
-            (X2, Y2) = (arrowPos.X, arrowPos.Y);
+            (X2, Y2) = arrowPos;
         }
 
         // Source: https://www.codeproject.com/Articles/23116/WPF-Arrow-and-Custom-Shapes
