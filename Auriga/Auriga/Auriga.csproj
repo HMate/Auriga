@@ -8,4 +8,15 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Remove="Toolkit\**" />
+    <EmbeddedResource Remove="Toolkit\**" />
+    <None Remove="Toolkit\**" />
+    <Page Remove="Toolkit\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MiqM.Xceed.Wpf.Toolkit.NETCore" Version="3.4.0.1" />
+  </ItemGroup>
+
 </Project>

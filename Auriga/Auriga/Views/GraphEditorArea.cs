@@ -29,9 +29,7 @@ namespace Auriga.Views
             MouseUp += GraphEditorArea_MouseUpEventHandler;
             MouseLeave += GraphEditorArea_MouseLeaveEventHandler;
             MouseMove += GraphEditorArea_MouseMoveEventHandler;
-
-            MouseWheel += GraphEditorArea_MouseWheelEventHandler;
-
+            
             Children.Clear();
         }
 
@@ -39,31 +37,6 @@ namespace Auriga.Views
         {
             Node,
             Arrow
-        }
-
-        private double scaleFactor = 1d;
-
-        public void GraphEditorArea_MouseWheelEventHandler(object sender, MouseWheelEventArgs e)
-        {
-            Zoom(0.002d*e.Delta);
-        }
-
-        internal void Zoom(double amount)
-        {
-            scaleFactor += amount;
-            scaleFactor = Math.Clamp(scaleFactor, 0.2, 5.0);
-            System.Diagnostics.Debug.WriteLine("scale: {0}", scaleFactor);
-            setZoom(scaleFactor);
-        }
-
-        private void setZoom(double factor)
-        {
-            ScaleTransform st = new ScaleTransform
-            {
-                ScaleX = factor,
-                ScaleY = factor
-            };
-            RenderTransform = st;
         }
 
         public static readonly DependencyProperty CreationModeProperty =

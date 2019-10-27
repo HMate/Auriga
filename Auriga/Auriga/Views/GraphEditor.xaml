@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:views="clr-namespace:Auriga.Views"
+             xmlns:zoom="http://schemas.xceed.com/wpf/xaml/toolkit"
              xmlns:graph="clr-namespace:Auriga.GraphControls"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
@@ -19,8 +20,18 @@
                 <Button ToolTip="Select to place arrows" Content="Arrow" Click="Button_SelectArrowCreationMode"/>
             </ToolBar>
         </ToolBarTray>
-        
-        <views:GraphEditorArea x:Name="GraphArea" Grid.Column="1">
-        </views:GraphEditorArea>
+
+        <!-- TODO: Make proper zooming by transforming the child elements instead of the whole convas.
+        For zooming now I just create a very big canvas and zoom in the middle. 
+        I do this to get away without having to extend the canvas to left, top, 
+        and transform the elements to stay at the same place visually -->
+        <zoom:Zoombox x:Name="GraphAreaZoom" Grid.Column="1" 
+                      DragModifiers="Ctrl" ZoomModifiers="Ctrl" ZoomOn="View" Position="-5000,-5000"
+                      CurrentViewChanged="GraphAreaZoom_CurrentViewChanged" Background="Aquamarine">
+            <views:GraphEditorArea x:Name="GraphArea" Width="10000" Height="10000">
+            </views:GraphEditorArea>
+        </zoom:Zoombox>
+
+
     </Grid>
 </UserControl>

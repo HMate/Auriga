@@ -34,5 +34,10 @@ namespace Auriga.Views
         {
             GraphArea.CreationMode = GraphEditorArea.CreationModeType.Arrow;
         }
+
+        private void GraphAreaZoom_CurrentViewChanged(object sender, Xceed.Wpf.Toolkit.Zoombox.ZoomboxViewChangedEventArgs e)
+        {
+            System.Diagnostics.Debug.WriteLine($"Current view changed {e.NewValue}");
+        }
     }
 }
