@@ -27,7 +27,7 @@
         and transform the elements to stay at the same place visually -->
         <zoom:Zoombox x:Name="GraphAreaZoom" Grid.Column="1" 
                       DragModifiers="Ctrl" ZoomModifiers="Ctrl" ZoomOn="View" Position="-5000,-5000"
-                      CurrentViewChanged="GraphAreaZoom_CurrentViewChanged" Background="Aquamarine">
+                      Background="Aquamarine" ZoomOnPreview="True" DragOnPreview="True">
             <views:GraphEditorArea x:Name="GraphArea" Width="10000" Height="10000">
             </views:GraphEditorArea>
         </zoom:Zoombox>
