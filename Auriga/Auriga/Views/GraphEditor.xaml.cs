@@ -35,9 +35,14 @@ namespace Auriga.Views
             GraphArea.CreationMode = GraphEditorArea.CreationModeType.Arrow;
         }
 
-        private void GraphAreaZoom_CurrentViewChanged(object sender, Xceed.Wpf.Toolkit.Zoombox.ZoomboxViewChangedEventArgs e)
+        private void Button_ClickClearGraph(object sender, RoutedEventArgs e)
         {
-            System.Diagnostics.Debug.WriteLine($"Current view changed {e.NewValue}");
+            GraphArea.ClearGraph();
+        }
+
+        private void Button_ClickDeleteNode(object sender, RoutedEventArgs e)
+        {
+            GraphArea.DeleteSelectedNode();
         }
     }
 }

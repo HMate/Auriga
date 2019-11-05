@@ -41,11 +41,44 @@ namespace Auriga.Views
 
         public static readonly DependencyProperty CreationModeProperty =
             DependencyProperty.Register("CreationMode", typeof(CreationModeType), typeof(GraphEditorArea));
-
+        
         public CreationModeType CreationMode
         {
             get { return (CreationModeType)GetValue(CreationModeProperty); }
             set { SetValue(CreationModeProperty, value); }
+        }
+
+        public void ClearGraph()
+        {
+            Children.Clear();
+        }
+
+        internal void DeleteSelectedNode()
+        {
+            List<UIElement> toRemove = new List<UIElement>();
+            foreach (UIElement nodeElem in Children)
+            {
+                if (!(nodeElem is GraphNode node))
+                {
+                    continue;
+                }
+                if (node.IsSelected)
+                {
+                    toRemove.Add(node);
+                    foreach (UIElement arrowElem in Children)
+                    {
+                        if (!(arrowElem is GraphArrow arrow))
+                        {
+                            continue;
+                        }
+                        if (arrow.StartNode == node || arrow.EndNode == node)
+                        {
+                            toRemove.Add(arrow);
+                        }
+                    }
+                }
+            }
+            toRemove.ForEach(e => Children.Remove(e));
         }
 
         public GraphNode AddNode(Point pos)

@@ -79,18 +79,18 @@ namespace Auriga.GraphControls
             set { SetValue(HeadWidthProperty, value); }
         }
 
-        private GraphNode? startNode;
-        private GraphNode? endNode;
+        public GraphNode? StartNode { private set; get; }
+        public GraphNode? EndNode { private set; get; }
 
         public void SetStartNode(GraphNode node)
         {
-            if (startNode != node)
+            if (StartNode != node)
             {
-                if (startNode != null)
+                if (StartNode != null)
                 {
-                    RemoveNodePosChanged(startNode, UpdateStartPositionEventHandler);
+                    RemoveNodePosChanged(StartNode, UpdateStartPositionEventHandler);
                 }
-                startNode = node;
+                StartNode = node;
                 UpdateStartPositionEventHandler(null, null);
                 RegisterNodePosChanged(node, UpdateStartPositionEventHandler);
             }
@@ -98,14 +98,14 @@ namespace Auriga.GraphControls
 
         public void SetEndNode(GraphNode node)
         {
-            if (endNode != node)
+            if (EndNode != node)
             {
-                if(endNode != null)
+                if(EndNode != null)
                 {
-                    RemoveNodePosChanged(endNode, UpdateEndPositionEventHandler);
+                    RemoveNodePosChanged(EndNode, UpdateEndPositionEventHandler);
                 }
 
-                endNode = node;
+                EndNode = node;
                 UpdateEndPositionEventHandler(null, null);
                 RegisterNodePosChanged(node, UpdateEndPositionEventHandler);
             }
@@ -118,18 +118,18 @@ namespace Auriga.GraphControls
 
         private void UpdateStartPositionEventHandler(object? sender, EventArgs? e)
         {
-            if (startNode != null)
+            if (StartNode != null)
             {
-                Point arrowPos = startNode.GetBottomArrowAttachPoint();
+                Point arrowPos = StartNode!.GetBottomArrowAttachPoint();
                 (X1, Y1) = arrowPos;
             }
         }
 
         private void UpdateEndPositionEventHandler(object? sender, EventArgs? e)
         {
-            if (endNode != null)
+            if (EndNode != null)
             {
-                Point arrowPos = endNode!.GetTopArrowAttachPoint();
+                Point arrowPos = EndNode!.GetTopArrowAttachPoint();
                 (X2, Y2) = arrowPos;
             }
         }

@@ -19,9 +19,13 @@
                 <Button ToolTip="Select to place nodes" Content="Node" Click="Button_SelectNodeCreationMode"/>
                 <Button ToolTip="Select to place arrows" Content="Arrow" Click="Button_SelectArrowCreationMode"/>
             </ToolBar>
+            <ToolBar  Background="YellowGreen" Margin="0,0,-100,0">
+                <Button ToolTip="Removes every node from the graph" Content="Clear Graph" Click="Button_ClickClearGraph"/>
+                <Button ToolTip="Removes selected node" Content="Delete Node" Click="Button_ClickDeleteNode"/>
+            </ToolBar>
         </ToolBarTray>
 
-        <!-- TODO: Make proper zooming by transforming the child elements instead of the whole convas.
+        <!-- TODO: Make proper zooming by transforming the child elements instead of the whole canvas.
         For zooming now I just create a very big canvas and zoom in the middle. 
         I do this to get away without having to extend the canvas to left, top, 
         and transform the elements to stay at the same place visually -->
