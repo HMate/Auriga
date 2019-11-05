@@ -9,7 +9,7 @@
         <Rectangle x:Name="NodeBox" Style="{StaticResource nodeStyle}" 
                    Width="{Binding Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}, Path=Width}"
                    Height="{Binding Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}, Path=Height}"/>
-        <TextBox x:Name="NameText" Text="{Binding NodeName, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:GraphNode}}, FallbackValue=Nice Lorem Ipsum}" 
+        <TextBox x:Name="NameTextBox" Text="{Binding NodeName, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:GraphNode}}, FallbackValue=Nice Lorem Ipsum}" 
                    VerticalAlignment="Center" HorizontalAlignment="Center" 
                    IsManipulationEnabled="True" Style="{StaticResource nodeStyle}" 
                    Margin="50, 20" MinWidth="50" MinHeight="23" />

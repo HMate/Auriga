@@ -1,4 +1,5 @@
 ﻿using Auriga.GraphControls;
+using Auriga.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,7 +23,7 @@ namespace Auriga.Views
         {
             DefaultStyleKeyProperty.OverrideMetadata(typeof(GraphEditorArea), new FrameworkPropertyMetadata(typeof(GraphEditorArea)));
         }
-
+        
         public GraphEditorArea()
         {
             MouseDown += GraphEditorArea_MouseDownEventHandler;
@@ -53,24 +54,38 @@ namespace Auriga.Views
             Children.Clear();
         }
 
-        internal void DeleteSelectedNode()
+        /// <summary>
+        /// Creates a <see cref="Graph"/> object from the currently edited graph.
+        /// </summary>
+        public Graph ToGraph()
+        {
+            Graph graph = new Graph();
+            foreach (GraphNode node in GetChildren<GraphNode>())
+            {
+                Vector offset = new Vector(node.ActualWidth / 2.0, node.ActualHeight / 2.0);
+                Point pos = new Point(GetLeft(node), GetTop(node)) + offset;
+                graph.AddNode(node.Id, node.NodeName, pos);
+            }
+            
+            foreach (GraphArrow arrow in GetChildren<GraphArrow>())
+            {
+                if (arrow.StartNode == null || arrow.EndNode == null)
+                    continue;
+                graph.AddEdge(arrow.StartNode.Id, arrow.EndNode.Id);
+            }
+            return graph;
+        }
+
+        public void DeleteSelectedNode()
         {
             List<UIElement> toRemove = new List<UIElement>();
-            foreach (UIElement nodeElem in Children)
+            foreach (GraphNode node in GetChildren<GraphNode>())
             {
-                if (!(nodeElem is GraphNode node))
-                {
-                    continue;
-                }
                 if (node.IsSelected)
                 {
                     toRemove.Add(node);
-                    foreach (UIElement arrowElem in Children)
+                    foreach (GraphArrow arrow in GetChildren<GraphArrow>())
                     {
-                        if (!(arrowElem is GraphArrow arrow))
-                        {
-                            continue;
-                        }
                         if (arrow.StartNode == node || arrow.EndNode == node)
                         {
                             toRemove.Add(arrow);
@@ -79,6 +94,17 @@ namespace Auriga.Views
                 }
             }
             toRemove.ForEach(e => Children.Remove(e));
+        }
+
+        private IEnumerable<T> GetChildren<T>()
+        {
+            foreach (UIElement? item in Children)
+            {
+                if (item is T t)
+                {
+                    yield return t;
+                }
+            }
         }
 
         public GraphNode AddNode(Point pos)
