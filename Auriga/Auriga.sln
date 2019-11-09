@@ -3,7 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29025.244
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Auriga", "Auriga\Auriga.csproj", "{46903120-91DB-4F4B-AAE8-BFADB87946DE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Auriga", "Auriga\Auriga.csproj", "{46903120-91DB-4F4B-AAE8-BFADB87946DE}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AurigaTest", "AurigaTest\AurigaTest.csproj", "{DBF337E6-1DEB-4276-B6C8-1CEA6349A927}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bifrost", "Bifrost\Bifrost.csproj", "{2A773570-AFE7-4A5E-815E-F1816CD404BF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +19,14 @@ Global
 		{46903120-91DB-4F4B-AAE8-BFADB87946DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{46903120-91DB-4F4B-AAE8-BFADB87946DE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{46903120-91DB-4F4B-AAE8-BFADB87946DE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DBF337E6-1DEB-4276-B6C8-1CEA6349A927}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DBF337E6-1DEB-4276-B6C8-1CEA6349A927}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DBF337E6-1DEB-4276-B6C8-1CEA6349A927}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DBF337E6-1DEB-4276-B6C8-1CEA6349A927}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2A773570-AFE7-4A5E-815E-F1816CD404BF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2A773570-AFE7-4A5E-815E-F1816CD404BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2A773570-AFE7-4A5E-815E-F1816CD404BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2A773570-AFE7-4A5E-815E-F1816CD404BF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
