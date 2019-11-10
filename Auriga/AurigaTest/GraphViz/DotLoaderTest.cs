@@ -5,24 +5,10 @@ using System.Collections.Generic;
 using System.IO;
 using Xunit;
 
-namespace AurigaTest
+namespace AurigaTest.GraphViz
 {
     public class DotLoaderTest
     {
-        [Fact]
-        public void LoadEmptyDot()
-        {
-            GraphData g = DotLoader.Load("");
-            Assert.Equal(0, g.Nodes.Count);
-        }
-
-        [Fact]
-        public void LoadInvalid()
-        {
-            GraphData g = DotLoader.Load("défáûéqlgf3i59üöflB:B%!ÖIWRJV");
-            Assert.Equal(0, g.Nodes.Count);
-        }
-
         [Fact]
         public void LoadEmptyGraph()
         {
@@ -74,7 +60,40 @@ namespace AurigaTest
 
             Assert.Equal("43.5,162", g.Nodes.GetValueOrDefault("a").GetValueOrDefault("pos"));
             Assert.Equal("43.5,143.7 43.5,132.85 43.5,118.92 43.5,108.1", g.Edges.GetValueOrDefault(Tuple.Create("a", "b")).Head.GetValueOrDefault("pos"));
+        }
 
+        [Fact]
+        public void LoadDirected()
+        {
+            GraphData g = DotLoader.Load(@"digraph {
+	a -> b;
+}");
+            Assert.True(g.IsDirected);
+            Assert.Equal(2, g.Nodes.Count);
+            Assert.True(g.Edges.ContainsKey(Tuple.Create("a", "b")));
+        }
+
+        [Fact]
+        public void LoadWrongFormat()
+        {
+            GraphData g = DotLoader.Load(@"digraph {
+	a -> b.
+}");
+            Assert.Equal(0, g.Nodes.Count);
+        }
+
+        [Fact]
+        public void LoadEmptyDot()
+        {
+            GraphData g = DotLoader.Load("");
+            Assert.Equal(0, g.Nodes.Count);
+        }
+
+        [Fact]
+        public void LoadInvalid()
+        {
+            GraphData g = DotLoader.Load("défáûéqlgf3i59üöflB:B%!ÖIWRJV");
+            Assert.Equal(0, g.Nodes.Count);
         }
     }
 }
