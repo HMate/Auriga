@@ -1,7 +1,8 @@
 ﻿using Auriga.GraphControls;
-using Auriga.Models;
+using Bifrost.GraphElements;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -142,6 +143,7 @@ namespace Auriga.Views
 
         public void GraphEditorArea_MouseDownEventHandler(object sender, MouseButtonEventArgs e)
         {
+            Debug.WriteLine($"Cliekced at {e.GetPosition(this)}");
             if(e.ChangedButton == MouseButton.Left)
             {
                 UnselectAllNodes();

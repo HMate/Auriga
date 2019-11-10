@@ -14,6 +14,11 @@
 
   <ItemGroup>
     <Folder Include="BusinessLogic\" />
+    <Folder Include="Models\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Bifrost\Bifrost.csproj" />
   </ItemGroup>
 
 </Project>

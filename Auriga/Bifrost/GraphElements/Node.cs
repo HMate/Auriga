@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Windows;
 
-namespace Auriga.Models
+namespace Bifrost.GraphElements
 {
     public class Node
     {
