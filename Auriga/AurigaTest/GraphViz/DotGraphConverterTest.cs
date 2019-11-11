@@ -1,9 +1,8 @@
 ﻿using Bifrost;
 using Bifrost.GraphElements;
 using DotParser;
-using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
 using System.Windows;
 using Xunit;
 
@@ -27,15 +26,19 @@ namespace AurigaTest.GraphViz
         }");
             Graph graph = DotGraphConverter.ToGraph(g);
             Assert.Equal(2, graph.Nodes.Count);
-            var iter = graph.Nodes.GetEnumerator();
+            var nodes = graph.Nodes.ToList();
 
-            iter.MoveNext();
-            Assert.Equal("a", iter.Current.NodeName);
-            Assert.Equal(new Point(27, 18), iter.Current.Position);
+            var nodeA = nodes[0];
+            Assert.Equal("a", nodeA.NodeName);
+            Assert.Equal(new Point(27, 18), nodeA.Position);
 
-            iter.MoveNext();
-            Assert.Equal("b", iter.Current.NodeName);
-            Assert.Equal(new Point(27, 90), iter.Current.Position);
+            var nodeB = nodes[1];
+            Assert.Equal("b", nodeB.NodeName);
+            Assert.Equal(new Point(27, 90), nodeB.Position);
+
+            List<Edge> edges = graph.Edges.ToList();
+            Assert.Equal(nodeA, graph.FindNode(edges[0].StartId));
+            Assert.Equal(nodeB, graph.FindNode(edges[0].EndId));
         }
     }
 }

@@ -2,7 +2,6 @@ using Bifrost;
 using DotParser;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using Xunit;
 
 namespace AurigaTest.GraphViz

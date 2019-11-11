@@ -4,13 +4,13 @@ namespace Bifrost.GraphElements
 {
     public class Edge
     {
-        private Guid startId;
-        private Guid endId;
+        public Guid StartId { get; }
+        public Guid EndId { get; }
 
         public Edge(Guid startId, Guid endId)
         {
-            this.startId = startId;
-            this.endId = endId;
+            StartId = startId;
+            EndId = endId;
         }
     }
 }

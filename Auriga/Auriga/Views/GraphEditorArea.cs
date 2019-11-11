@@ -1,20 +1,10 @@
 ﻿using Auriga.GraphControls;
 using Bifrost.GraphElements;
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Auriga.Views
 {
@@ -24,14 +14,14 @@ namespace Auriga.Views
         {
             DefaultStyleKeyProperty.OverrideMetadata(typeof(GraphEditorArea), new FrameworkPropertyMetadata(typeof(GraphEditorArea)));
         }
-        
+
         public GraphEditorArea()
         {
             MouseDown += GraphEditorArea_MouseDownEventHandler;
             MouseUp += GraphEditorArea_MouseUpEventHandler;
             MouseLeave += GraphEditorArea_MouseLeaveEventHandler;
             MouseMove += GraphEditorArea_MouseMoveEventHandler;
-            
+
             Children.Clear();
         }
 
@@ -43,7 +33,7 @@ namespace Auriga.Views
 
         public static readonly DependencyProperty CreationModeProperty =
             DependencyProperty.Register("CreationMode", typeof(CreationModeType), typeof(GraphEditorArea));
-        
+
         public CreationModeType CreationMode
         {
             get { return (CreationModeType)GetValue(CreationModeProperty); }
@@ -67,7 +57,7 @@ namespace Auriga.Views
                 Point pos = new Point(GetLeft(node), GetTop(node)) + offset;
                 graph.AddNode(node.Id, node.NodeName, pos);
             }
-            
+
             foreach (GraphArrow arrow in GetChildren<GraphArrow>())
             {
                 if (arrow.StartNode == null || arrow.EndNode == null)
@@ -144,7 +134,7 @@ namespace Auriga.Views
         public void GraphEditorArea_MouseDownEventHandler(object sender, MouseButtonEventArgs e)
         {
             Debug.WriteLine($"Cliekced at {e.GetPosition(this)}");
-            if(e.ChangedButton == MouseButton.Left)
+            if (e.ChangedButton == MouseButton.Left)
             {
                 UnselectAllNodes();
                 if (e.Source is GraphNode node)
@@ -160,7 +150,7 @@ namespace Auriga.Views
                         moveStartNodePosOffset = e.GetPosition(node);
                     }
                 }
-                else if(CreationMode == CreationModeType.Node)
+                else if (CreationMode == CreationModeType.Node)
                 {
                     var newNode = AddNode(e.GetPosition(this));
                     newNode.IsSelected = true;
@@ -193,13 +183,13 @@ namespace Auriga.Views
 
         public void GraphEditorArea_MouseMoveEventHandler(object sender, MouseEventArgs e)
         {
-            if(movingNode != null)
+            if (movingNode != null)
             {
                 var curPos = e.GetPosition(this);
                 SetLeft(movingNode, curPos.X - moveStartNodePosOffset.X);
                 SetTop(movingNode, curPos.Y - moveStartNodePosOffset.Y);
             }
-            if(arrowUnderCreation != null)
+            if (arrowUnderCreation != null)
             {
                 if (e.Source is GraphNode node)
                 {
@@ -223,9 +213,9 @@ namespace Auriga.Views
 
         private void UnselectAllNodes()
         {
-            foreach(var child in Children)
+            foreach (var child in Children)
             {
-                if(child is GraphNode node)
+                if (child is GraphNode node)
                 {
                     node.IsSelected = false;
                 }

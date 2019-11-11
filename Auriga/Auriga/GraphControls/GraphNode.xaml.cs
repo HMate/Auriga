@@ -1,18 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Auriga.GraphControls
 {
@@ -23,7 +11,7 @@ namespace Auriga.GraphControls
     {
         public Guid Id { get; }
 
-        public static readonly DependencyProperty NodeNameProperty = 
+        public static readonly DependencyProperty NodeNameProperty =
             DependencyProperty.Register("NodeName", typeof(string), typeof(GraphNode));
 
         public static readonly DependencyProperty IsSelectedProperty =
@@ -41,9 +29,9 @@ namespace Auriga.GraphControls
             set { SetValue(IsSelectedProperty, value); }
         }
 
-        public GraphNode() : this("Default") {}
+        public GraphNode() : this("Default") { }
 
-        public GraphNode(string name) : this(Guid.NewGuid(), name) {}
+        public GraphNode(string name) : this(Guid.NewGuid(), name) { }
 
         public GraphNode(Guid id, string name)
         {

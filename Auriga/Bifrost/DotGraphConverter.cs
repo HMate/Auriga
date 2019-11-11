@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Windows;
-using Bifrost.GraphElements;
+﻿using Bifrost.GraphElements;
 using DotParser;
+using System;
+using System.Collections.Generic;
+using System.Windows;
 
 namespace Bifrost
 {
@@ -13,12 +12,19 @@ namespace Bifrost
         {
             Graph result = new Graph();
             Rect bb = parseDotBoundingBox(dot.GraphAttributes.GetValueOrDefault("bb"));
-            foreach (var dotNode in dot.Nodes) 
+            Dictionary<string, Node> nodes = new Dictionary<string, Node>();
+            foreach (var dotNode in dot.Nodes)
             {
                 Point p = Point.Parse(dotNode.Value.GetValueOrDefault("pos"));
                 // Have to flip position, because WPF orig is leftop, graphviz is leftbot
                 p = new Point(p.X, bb.Bottom - p.Y);
-                result.AddNode(Guid.NewGuid(), dotNode.Key, p);
+                Node n = result.AddNode(Guid.NewGuid(), dotNode.Key, p);
+                nodes.Add(dotNode.Key, n);
+            }
+            foreach (var dotEdge in dot.Edges)
+            {
+                (string start, string end) = dotEdge.Key;
+                result.AddEdge(nodes[start].Id, nodes[end].Id);
             }
             return result;
         }
