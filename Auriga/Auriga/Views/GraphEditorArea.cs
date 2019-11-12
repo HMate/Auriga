@@ -1,5 +1,6 @@
 ﻿using Auriga.GraphControls;
 using Bifrost.GraphElements;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows;
@@ -98,9 +99,29 @@ namespace Auriga.Views
             }
         }
 
+        internal void LoadGraph(Graph gr)
+        {
+            ClearGraph();
+            Dictionary<Guid, GraphNode> nodes = new Dictionary<Guid, GraphNode>();
+            foreach (var node in gr.Nodes)
+            {
+                nodes.Add(node.Id, AddNode(node.NodeName, node.Position));
+            }
+
+            foreach (var edge in gr.Edges)
+            {
+                AddArrow(nodes[edge.StartId], nodes[edge.EndId]);
+            }
+        }
+
         public GraphNode AddNode(Point pos)
         {
-            var element = new GraphNode("Default Name");
+            return AddNode("Default Name", pos);
+        }
+
+        public GraphNode AddNode(string name, Point pos)
+        {
+            var element = new GraphNode(name);
 
             // Width, Height Are Nan here, ActualWidth/H are 0, so we force compute them
             element.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
@@ -121,6 +142,21 @@ namespace Auriga.Views
             element.SetStartNode(node);
             // Set arrow position manually until we dont have ending box.
             element.SetEndPoint(curPos);
+
+            Children.Add(element);
+            return element;
+        }
+
+        public GraphArrow AddArrow(GraphNode start, GraphNode end)
+        {
+            var element = new GraphArrow
+            {
+                HeadHeight = 10,
+                HeadWidth = 5
+            };
+            element.SetStartNode(start);
+            // Set arrow position manually until we dont have ending box.
+            element.SetEndNode(end);
 
             Children.Add(element);
             return element;

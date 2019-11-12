@@ -22,6 +22,7 @@
             <ToolBar  Background="YellowGreen" Margin="0,0,-100,0">
                 <Button ToolTip="Removes every node from the graph" Content="Clear Graph" Click="Button_ClickClearGraph"/>
                 <Button ToolTip="Removes selected node" Content="Delete Node" Click="Button_ClickDeleteNode"/>
+                <Button ToolTip="Opens .dot file" Content="Open Graph" Click="Button_ClickOpenDotFile"/>
             </ToolBar>
         </ToolBarTray>
 
