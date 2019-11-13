@@ -1,4 +1,5 @@
 using Bifrost;
+using Bifrost.Dot;
 using DotParser;
 using System;
 using System.Collections.Generic;
@@ -11,33 +12,34 @@ namespace AurigaTest.GraphViz
         [Fact]
         public void LoadEmptyGraph()
         {
-            GraphData g = DotLoader.Load("graph {}");
-            Assert.Equal(0, g.Nodes.Count);
+            DotGraph g = DotLoader.Load("graph {}");
+            Assert.Empty(g.Nodes);
         }
 
         [Fact]
         public void LoadUndirected()
         {
-            GraphData g = DotLoader.Load(@"graph {
+            DotGraph g = DotLoader.Load(@"graph test {
 	cartographer[shape=rect]
 	a -- b
 	b -- cartographer
 }");
             Assert.False(g.IsDirected);
+            Assert.False(g.IsStrict);
             Assert.True(g.Nodes.ContainsKey("a"));
             Assert.True(g.Nodes.ContainsKey("b"));
             Assert.True(g.Nodes.ContainsKey("cartographer"));
             Assert.Equal(3, g.Nodes.Count);
 
-            Assert.True(g.Edges.ContainsKey(Tuple.Create("a", "b")));
-            Assert.True(g.Edges.ContainsKey(Tuple.Create("b", "cartographer")));
+            Assert.True(g.Edges.ContainsKey(("a", "b")));
+            Assert.True(g.Edges.ContainsKey(("b", "cartographer")));
             Assert.Equal(2, g.Edges.Count);
         }
 
         [Fact]
         public void LoadDetailed()
         {
-            GraphData g = DotLoader.Load(@"graph {
+            GraphData g = DotLoader.LoadF(@"graph {
 	graph [bb=""0, 0, 87, 180""];
     node[label = ""\N""];
             cartographer[height = 0.5,
@@ -64,7 +66,7 @@ namespace AurigaTest.GraphViz
         [Fact]
         public void LoadDirected()
         {
-            GraphData g = DotLoader.Load(@"digraph {
+            GraphData g = DotLoader.LoadF(@"digraph {
 	a -> b;
 }");
             Assert.True(g.IsDirected);
@@ -75,7 +77,7 @@ namespace AurigaTest.GraphViz
         [Fact]
         public void LoadWrongFormat()
         {
-            GraphData g = DotLoader.Load(@"digraph {
+            GraphData g = DotLoader.LoadF(@"digraph {
 	a -> b.
 }");
             Assert.Equal(0, g.Nodes.Count);
@@ -84,14 +86,14 @@ namespace AurigaTest.GraphViz
         [Fact]
         public void LoadEmptyDot()
         {
-            GraphData g = DotLoader.Load("");
+            DotGraph g = DotLoader.Load("");
             Assert.Equal(0, g.Nodes.Count);
         }
 
         [Fact]
         public void LoadInvalid()
         {
-            GraphData g = DotLoader.Load("défáûéqlgf3i59üöflB:B%!ÖIWRJV");
+            DotGraph g = DotLoader.Load("défáûéqlgf3i59üöflB:B%!ÖIWRJV");
             Assert.Equal(0, g.Nodes.Count);
         }
     }

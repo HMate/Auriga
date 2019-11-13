@@ -1,4 +1,5 @@
 ﻿using Bifrost;
+using Bifrost.Dot;
 using Bifrost.GraphElements;
 using DotParser;
 using System.Collections.Generic;
@@ -13,7 +14,7 @@ namespace AurigaTest.GraphViz
         [Fact]
         public void ConvertDotGraphToBifrostGraph()
         {
-            GraphData g = DotLoader.Load(@"digraph {
+            GraphData g = DotLoader.LoadF(@"digraph {
             graph [bb=""0, 0, 54, 108""];
             node[label = ""\N""];
             a[height = 0.5,

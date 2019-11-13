@@ -5,7 +5,18 @@ namespace Bifrost
 {
     public class DotLoader
     {
-        public static GraphData Load(string dotString)
+        public static Dot.DotGraph Load(string dotString)
+        {
+            Dot.DotGraph gr = new Dot.DotGraph();
+
+            dotString = dotString.Trim();
+            string[] tokens = dotString.Split(new [] { " ", "\t", "\n", "\r", "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
+
+            return gr;
+        }
+
+
+        public static GraphData LoadF(string dotString)
         {
             try
             {

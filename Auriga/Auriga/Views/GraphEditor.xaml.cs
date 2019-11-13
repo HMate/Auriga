@@ -46,7 +46,7 @@ namespace Auriga.Views
             {
                 Debug.WriteLine($"Opening: {dialog.FileName}");
                 string content = File.ReadAllText(dialog.FileName);
-                Graph gr = DotGraphConverter.ToGraph(DotLoader.Load(content));
+                Graph gr = DotGraphConverter.ToGraph(DotLoader.LoadF(content));
 
                 GraphArea.LoadGraph(gr);
             }
