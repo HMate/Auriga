@@ -9,8 +9,6 @@ namespace Bifrost
     public class DotLoader
     {
         private string dotString;
-        private int pos = 0;
-        private int trypos = 0;
         private const StringComparison casei = StringComparison.OrdinalIgnoreCase;
 
         public DotLoader(string dotString)
@@ -56,29 +54,34 @@ namespace Bifrost
             {
                 tokenIter.MoveNext();
             }
+
+            string? lastNode = null;
             if (tokenIter.Current == "{")
             {
                 tokenIter.MoveNext();
-                string node = tokenIter.Current;
 
-                if (tokenIter.Current != "}")
+                while (tokenIter.Current != "}")
                 {
-                    gr.Nodes.Add(node, new Dot.DotNode());
+                    string token = tokenIter.Current;
+
+                    if(token == "--")
+                    {
+                        tokenIter.MoveNext();
+                        string nextNode = tokenIter.Current;
+                        gr.Nodes.Add(nextNode, new Dot.DotNode());
+                        if(lastNode != null)
+                            gr.Edges.Add((lastNode, nextNode), new Dot.DotEdge());
+                    }
+                    else
+                    {
+                        gr.Nodes.Add(token, new Dot.DotNode());
+                        lastNode = token;
+                    }
+
+                    tokenIter.MoveNext();
                 }
             }
-            //string token = readUntil(' ', '{');
-            //if(token.Equals("graph", casei) || token.Equals("digraph", casei))
-            //{
-            //    if(current() != '{')
-            //    {
-            //        string name = readUntil('{').Trim();
-            //    }
 
-            //    while (current() != '}')
-            //    {
-            //        tryReadNodeStatement();
-            //    } 
-            //}
 
             return gr;
         }
@@ -86,88 +89,8 @@ namespace Bifrost
         private static List<string> tokenize(string text)
         {
             List<string> tokens = new List<string>(text.Split(new[] { " ", "\t", "\n", "\r", "\r\n" }, StringSplitOptions.RemoveEmptyEntries));
-            tokens = tokens.SelectMany(t => Regex.Split(t, @"([\][}{])")).Where(t => !string.IsNullOrWhiteSpace(t)).ToList();
+            tokens = tokens.SelectMany(t => Regex.Split(t, @"([\][}{]|--)")).Where(t => !string.IsNullOrWhiteSpace(t)).ToList();
             return tokens;
-        }
-
-        private bool tryReadNodeStatement()
-        {
-            resetTryPos();
-            return tryReadID() && tryReadAttrList();
-        }
-
-        private bool tryReadAttrList()
-        {
-            throw new NotImplementedException();
-        }
-
-        private bool tryReadID()
-        {
-            while (char.IsWhiteSpace(dotString, trypos))
-                trypos++;
-            if (trypos >= dotString.Length)
-            {
-                return false;
-            }
-            if(dotString[trypos] == '"' )
-            {
-                trypos++;
-                while (!(dotString[trypos] == '"' && dotString[trypos-1] == '\\') && trypos < dotString.Length)
-                    trypos++;
-                if (trypos >= dotString.Length)
-                {
-                    return false;
-                }
-            }
-            return true;
-        }
-
-        private bool tryReadEdgeStatement()
-        {
-            throw new NotImplementedException();
-        }
-
-        private bool tryReadAttrStatement()
-        {
-            throw new NotImplementedException();
-        }
-
-        private bool tryReadIDAssignment()
-        {
-            throw new NotImplementedException();
-        }
-
-        private bool tryReadSubGraphStatement()
-        {
-            throw new NotImplementedException();
-        }
-
-        private void resetTryPos()
-        {
-            trypos = pos;
-        }
-
-        private void advancePos()
-        {
-            pos = trypos;
-        }
-
-        private string readUntil(params char[] separators)
-        {
-            int index = dotString.IndexOfAny(separators, pos);
-            int charCount = index - pos;
-            if (index < 0 || dotString.Length - pos - 1 < charCount)
-            {
-                charCount = dotString.Length - pos - 1;
-            }
-            string token = dotString.Substring(pos, charCount);
-            pos = index;
-            return token;
-        }
-
-        private char current()
-        {
-            return dotString[pos];
         }
 
         public static GraphData LoadF(string dotString)

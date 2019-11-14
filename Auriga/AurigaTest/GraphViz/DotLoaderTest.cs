@@ -3,6 +3,7 @@ using Bifrost.Dot;
 using DotParser;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Xunit;
 
 namespace AurigaTest.GraphViz
@@ -64,6 +65,35 @@ namespace AurigaTest.GraphViz
             Assert.Equal(1, g.Nodes.Count);
         }
 
+        [Theory]
+        [InlineData(@"graph G {Welcome}", new[]{ "Welcome" })]
+        [InlineData(@"graph {Welcome a b}", new[]{ "Welcome", "a", "b" })]
+        [InlineData(@"graph test {a -- b}", new[] { "a", "b" })]
+        public void LoadMultipleNodes(string dot, string[] keys)
+        {
+            DotGraph g = DotLoader.Load(dot);
+            foreach (var key in keys)
+            {
+                Assert.Contains(key, g.Nodes);
+            }
+            Assert.Equal(keys.Length, g.Nodes.Count);
+        }
+
+        [Theory]
+        [InlineData(@"graph test {a -- b}", new [] { "a", "b" })]
+        [InlineData(@"graph test {a--b}", new[] { "a", "b" })]
+        public void LoadGraphEdges(string dot, string[] edgeNodes)
+        {
+            DotGraph g = DotLoader.Load(dot);
+
+            var edgePairs = edgeNodes.Zip(edgeNodes.Skip(1)).Where((t, i) => i % 2 == 0).ToList();
+            foreach (var edge in edgePairs)
+            {
+                Assert.Contains(edge, g.Edges);
+            }
+            Assert.Equal(edgePairs.Count, g.Edges.Count);
+        }
+
         [Fact]
         public void LoadGraphWithNodes()
         {
@@ -72,8 +102,6 @@ namespace AurigaTest.GraphViz
 	a -- b
 	b -- cartographer
 }");
-            Assert.False(g.IsDirected);
-            Assert.False(g.IsStrict);
             Assert.True(g.Nodes.ContainsKey("a"));
             Assert.True(g.Nodes.ContainsKey("b"));
             Assert.True(g.Nodes.ContainsKey("cartographer"));
