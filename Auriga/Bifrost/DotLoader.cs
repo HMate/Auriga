@@ -1,5 +1,8 @@
 ﻿using DotParser;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace Bifrost
 {
@@ -31,24 +34,60 @@ namespace Bifrost
                 return gr;
             }
 
-            string[] tokens = dotString.Split(new[] { " ", "\t", "\n", "\r", "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
+            List<string> tokens = tokenize(dotString);
+            var tokenIter = tokens.GetEnumerator();
 
-
-            string token = readUntil(' ', '{');
-            if(token.Equals("graph", casei) || token.Equals("digraph", casei))
+            tokenIter.MoveNext();
+            string first = tokenIter.Current;
+            if (!first.Equals("graph", casei) && !first.Equals("digraph", casei) && !first.Equals("strict", casei))
             {
-                if(current() != '{')
-                {
-                    string name = readUntil('{').Trim();
-                }
-
-                while (current() != '}')
-                {
-                    tryReadNodeStatement();
-                } 
+                return gr;
             }
 
+            if(first.Equals("strict", casei))
+            {
+                gr.IsStrict = true;
+                tokenIter.MoveNext();
+            }
+            gr.IsDirected = tokenIter.Current.Equals("digraph", casei);
+            tokenIter.MoveNext();
+
+            if (tokenIter.Current != "{")
+            {
+                tokenIter.MoveNext();
+            }
+            if (tokenIter.Current == "{")
+            {
+                tokenIter.MoveNext();
+                string node = tokenIter.Current;
+
+                if (tokenIter.Current != "}")
+                {
+                    gr.Nodes.Add(node, new Dot.DotNode());
+                }
+            }
+            //string token = readUntil(' ', '{');
+            //if(token.Equals("graph", casei) || token.Equals("digraph", casei))
+            //{
+            //    if(current() != '{')
+            //    {
+            //        string name = readUntil('{').Trim();
+            //    }
+
+            //    while (current() != '}')
+            //    {
+            //        tryReadNodeStatement();
+            //    } 
+            //}
+
             return gr;
+        }
+
+        private static List<string> tokenize(string text)
+        {
+            List<string> tokens = new List<string>(text.Split(new[] { " ", "\t", "\n", "\r", "\r\n" }, StringSplitOptions.RemoveEmptyEntries));
+            tokens = tokens.SelectMany(t => Regex.Split(t, @"([\][}{])")).Where(t => !string.IsNullOrWhiteSpace(t)).ToList();
+            return tokens;
         }
 
         private bool tryReadNodeStatement()

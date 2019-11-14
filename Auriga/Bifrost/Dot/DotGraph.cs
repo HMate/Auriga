@@ -6,8 +6,8 @@ namespace Bifrost.Dot
 {
     public class DotGraph
     {
-        public Dictionary<string, DotNode> Nodes { get; } = new Dictionary<string, DotNode>();
-        public Dictionary<(string, string), DotEdge> Edges { get; } = new Dictionary<(string, string), DotEdge>();
+        public IDictionary<string, DotNode> Nodes { get; } = new Dictionary<string, DotNode>();
+        public IDictionary<(string, string), DotEdge> Edges { get; } = new Dictionary<(string, string), DotEdge>();
 
         public bool IsDirected = false;
 
