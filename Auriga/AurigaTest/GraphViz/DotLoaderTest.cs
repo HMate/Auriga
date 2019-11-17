@@ -18,6 +18,7 @@ namespace AurigaTest.GraphViz
         [InlineData(@"")]
         [InlineData(@"ápwrkglápwkg48zu,.,kp3u9u{}")]
         [InlineData(@"graph")]
+        [InlineData(@"graph {")]
         [InlineData(@"strict")]
         public void LoadEmptyGraph(string dot)
         {
@@ -66,9 +67,14 @@ namespace AurigaTest.GraphViz
         }
 
         [Theory]
-        [InlineData(@"graph G {Welcome}", new[]{ "Welcome" })]
-        [InlineData(@"graph {Welcome a b}", new[]{ "Welcome", "a", "b" })]
+        [InlineData(@"graph G {Welcome}", new[] { "Welcome" })]
+        [InlineData(@"graph {Welcome a b}", new[] { "Welcome", "a", "b" })]
         [InlineData(@"graph test {a -- b}", new[] { "a", "b" })]
+        [InlineData(@"graph test {a--b -- c}", new[] { "a", "b", "c" })]
+        [InlineData(@"graph test {a -- b -- a}", new[] { "a", "b" })]
+        [InlineData(@"graph test {a -- b -- c f}", new[] { "a", "b", "c", "f" })]
+        [InlineData(@"graph test {a -- }", new[] { "a" })]
+        [InlineData(@"graph test {a -- ", new[] { "a" })]
         public void LoadMultipleNodes(string dot, string[] keys)
         {
             DotGraph g = DotLoader.Load(dot);
@@ -76,12 +82,19 @@ namespace AurigaTest.GraphViz
             {
                 Assert.Contains(key, g.Nodes);
             }
+            foreach (var key in g.Nodes.Keys)
+            {
+                Assert.Contains(key, keys);
+            }
             Assert.Equal(keys.Length, g.Nodes.Count);
         }
 
         [Theory]
         [InlineData(@"graph test {a -- b}", new [] { "a", "b" })]
         [InlineData(@"graph test {a--b}", new[] { "a", "b" })]
+        [InlineData(@"graph test {a--b -- c}", new[] { "a", "b", "b", "c" })]
+        [InlineData(@"digraph test {a -> b}", new[] { "a", "b" })]
+        [InlineData(@"digraph test {a->b}", new[] { "a", "b" })]
         public void LoadGraphEdges(string dot, string[] edgeNodes)
         {
             DotGraph g = DotLoader.Load(dot);
@@ -91,7 +104,35 @@ namespace AurigaTest.GraphViz
             {
                 Assert.Contains(edge, g.Edges);
             }
+            foreach (var key in g.Edges.Keys)
+            {
+                Assert.Contains(key, edgePairs);
+            }
             Assert.Equal(edgePairs.Count, g.Edges.Count);
+        }
+
+        // TODO: Missing multiple edges
+
+        [Theory]
+        [InlineData(@"graph test {key=val}", new[] { "key", "val" })]
+        [InlineData(@"graph test {key = val}", new[] { "key", "val" })]
+        [InlineData(@"graph test {key= val}", new[] { "key", "val" })]
+        [InlineData(@"graph test {key =val}", new[] { "key", "val" })]
+        [InlineData(@"graph test {key = val size=test}", new[] { "key", "val", "size", "test" })]
+        public void LoadGraphAttributes(string dot, string[] keyvals)
+        {
+            DotGraph g = DotLoader.Load(dot);
+
+            var attributes = keyvals.Zip(keyvals.Skip(1)).Where((t, i) => i % 2 == 0)
+                .ToDictionary(kv => kv.First, kv => kv.Second);
+            foreach (var attr in attributes)
+            {
+                Assert.Contains(attr, g.GraphAttributes);
+            }
+            foreach (var key in g.GraphAttributes)
+            {
+                Assert.Contains(key, attributes);
+            }
         }
 
         [Fact]

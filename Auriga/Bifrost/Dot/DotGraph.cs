@@ -8,6 +8,7 @@ namespace Bifrost.Dot
     {
         public IDictionary<string, DotNode> Nodes { get; } = new Dictionary<string, DotNode>();
         public IDictionary<(string, string), DotEdge> Edges { get; } = new Dictionary<(string, string), DotEdge>();
+        public IDictionary<string, string> GraphAttributes { get; } = new Dictionary<string, string>();
 
         public bool IsDirected = false;
 

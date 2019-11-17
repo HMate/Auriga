@@ -10,6 +10,7 @@ namespace Bifrost
     {
         private string dotString;
         private const StringComparison casei = StringComparison.OrdinalIgnoreCase;
+        private List<string>.Enumerator tokenIter;
 
         public DotLoader(string dotString)
         {
@@ -33,11 +34,13 @@ namespace Bifrost
             }
 
             List<string> tokens = tokenize(dotString);
-            var tokenIter = tokens.GetEnumerator();
+            tokenIter = tokens.GetEnumerator();
 
-            tokenIter.MoveNext();
-            string first = tokenIter.Current;
-            if (!first.Equals("graph", casei) && !first.Equals("digraph", casei) && !first.Equals("strict", casei))
+            string? first = nextToken();
+            if (string.IsNullOrWhiteSpace(first) || 
+                (!first.Equals("graph", casei) && 
+                !first.Equals("digraph", casei) && 
+                !first.Equals("strict", casei)))
             {
                 return gr;
             }
@@ -55,30 +58,41 @@ namespace Bifrost
                 tokenIter.MoveNext();
             }
 
-            string? lastNode = null;
             if (tokenIter.Current == "{")
             {
-                tokenIter.MoveNext();
-
-                while (tokenIter.Current != "}")
+                string? lastToken = null;
+                for (string? token = nextToken(); token != "}" && token != null; token = nextToken())
                 {
-                    string token = tokenIter.Current;
-
-                    if(token == "--")
+                    if(token == "--" || token == "->")
                     {
-                        tokenIter.MoveNext();
-                        string nextNode = tokenIter.Current;
-                        gr.Nodes.Add(nextNode, new Dot.DotNode());
-                        if(lastNode != null)
-                            gr.Edges.Add((lastNode, nextNode), new Dot.DotEdge());
+                        string? nextNode = nextToken();
+                        if (nextNode == null || nextNode == "}")
+                        {
+                            return gr;
+                        }
+                        gr.Nodes.TryAdd(nextNode, new Dot.DotNode());
+                        if (lastToken != null)
+                        {
+                            gr.Edges.Add((lastToken, nextNode), new Dot.DotEdge());
+                        }
+                        lastToken = nextNode;
+                    }
+                    else if(token == "=")
+                    {
+                        string? val = nextToken();
+                        if (val == null || val == "}")
+                        {
+                            return gr;
+                        }
+                        if (lastToken != null)
+                            gr.GraphAttributes.Add(lastToken, val);
+                        lastToken = null;
                     }
                     else
                     {
                         gr.Nodes.Add(token, new Dot.DotNode());
-                        lastNode = token;
+                        lastToken = token;
                     }
-
-                    tokenIter.MoveNext();
                 }
             }
 
@@ -86,10 +100,19 @@ namespace Bifrost
             return gr;
         }
 
+        private string? nextToken()
+        {
+            tokenIter.MoveNext();
+            return tokenIter.Current;
+        }
+
         private static List<string> tokenize(string text)
         {
-            List<string> tokens = new List<string>(text.Split(new[] { " ", "\t", "\n", "\r", "\r\n" }, StringSplitOptions.RemoveEmptyEntries));
-            tokens = tokens.SelectMany(t => Regex.Split(t, @"([\][}{]|--)")).Where(t => !string.IsNullOrWhiteSpace(t)).ToList();
+            List<string> tokens = new List<string>(
+                text.Split(new[] { " ", "\t", "\n", "\r", "\r\n" }, 
+                StringSplitOptions.RemoveEmptyEntries));
+            tokens = tokens.SelectMany(t => Regex.Split(t, @"([\][}{]|--|->|=)"))
+                .Where(t => !string.IsNullOrWhiteSpace(t)).ToList();
             return tokens;
         }
 
