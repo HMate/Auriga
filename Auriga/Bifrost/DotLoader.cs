@@ -61,6 +61,7 @@ namespace Bifrost
             if (tokenIter.Current == "{")
             {
                 string? lastToken = null;
+                IDictionary<string, string> attributeContext = gr.GraphAttributes;
                 for (string? token = nextToken(); token != "}" && token != null; token = nextToken())
                 {
                     if(token == "--" || token == "->")
@@ -68,31 +69,57 @@ namespace Bifrost
                         string? nextNode = nextToken();
                         if (nextNode == null || nextNode == "}")
                         {
-                            return gr;
+                            break;
                         }
                         gr.Nodes.TryAdd(nextNode, new Dot.DotNode());
                         if (lastToken != null)
                         {
+                            gr.Nodes.TryAdd(lastToken, new Dot.DotNode());
                             gr.Edges.Add((lastToken, nextNode), new Dot.DotEdge());
                         }
                         lastToken = nextNode;
+                    }
+                    else if (token == "[")
+                    {
+                        if (lastToken != null)
+                        {
+                            gr.Nodes.TryAdd(lastToken, new Dot.DotNode());
+                            attributeContext = gr.Nodes[lastToken].Attributes;
+                        }
+                        else
+                        {
+                            attributeContext = gr.GraphAttributes;
+                        }
+                        lastToken = null;
+                    }
+                    else if (token == "]")
+                    {
+                        attributeContext = gr.GraphAttributes;
                     }
                     else if(token == "=")
                     {
                         string? val = nextToken();
                         if (val == null || val == "}")
                         {
-                            return gr;
+                            break;
                         }
                         if (lastToken != null)
-                            gr.GraphAttributes.Add(lastToken, val);
+                            attributeContext.Add(lastToken, val);
                         lastToken = null;
                     }
                     else
                     {
-                        gr.Nodes.Add(token, new Dot.DotNode());
+                        if (lastToken != null)
+                        {
+                            gr.Nodes.TryAdd(lastToken, new Dot.DotNode());
+                        }
                         lastToken = token;
                     }
+                }
+
+                if (lastToken != null)
+                {
+                    gr.Nodes.TryAdd(lastToken, new Dot.DotNode());
                 }
             }
 

@@ -99,7 +99,7 @@ namespace AurigaTest.GraphViz
         {
             DotGraph g = DotLoader.Load(dot);
 
-            var edgePairs = edgeNodes.Zip(edgeNodes.Skip(1)).Where((t, i) => i % 2 == 0).ToList();
+            var edgePairs = toTupleList(edgeNodes);
             foreach (var edge in edgePairs)
             {
                 Assert.Contains(edge, g.Edges);
@@ -123,11 +123,32 @@ namespace AurigaTest.GraphViz
         {
             DotGraph g = DotLoader.Load(dot);
 
-            var attributes = keyvals.Zip(keyvals.Skip(1)).Where((t, i) => i % 2 == 0)
-                .ToDictionary(kv => kv.First, kv => kv.Second);
+            var attributes = toDictionary(keyvals);
             foreach (var attr in attributes)
             {
                 Assert.Contains(attr, g.GraphAttributes);
+            }
+            foreach (var key in g.GraphAttributes)
+            {
+                Assert.Contains(key, attributes);
+            }
+        }
+
+
+        [Theory]
+        [InlineData(@"graph test {a[key=val]}", new[] { "key", "val" })]
+        public void LoadNodeAttributes(string dot, string[] keyvals)
+        {
+            DotGraph g = DotLoader.Load(dot);
+
+            Assert.Contains("a", g.Nodes);
+            Assert.Equal(1, g.Nodes.Count);
+
+            DotNode node = g.Nodes["a"];
+            var attributes = toDictionary(keyvals);
+            foreach (var attr in attributes)
+            {
+                Assert.Contains(attr, node.Attributes);
             }
             foreach (var key in g.GraphAttributes)
             {
@@ -198,6 +219,17 @@ namespace AurigaTest.GraphViz
 	a -> b.
 }");
             Assert.Equal(0, g.Nodes.Count);
+        }
+
+        private static Dictionary<string, string> toDictionary(string[] keyvals)
+        {
+            return keyvals.Zip(keyvals.Skip(1)).Where((t, i) => i % 2 == 0)
+                            .ToDictionary(kv => kv.First, kv => kv.Second);
+        }
+
+        private static List<(string First, string Second)> toTupleList(string[] edgeNodes)
+        {
+            return edgeNodes.Zip(edgeNodes.Skip(1)).Where((t, i) => i % 2 == 0).ToList();
         }
     }
 }
