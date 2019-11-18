@@ -75,6 +75,8 @@ namespace AurigaTest.GraphViz
         [InlineData(@"graph test {a -- b -- c f}", new[] { "a", "b", "c", "f" })]
         [InlineData(@"graph test {a -- }", new[] { "a" })]
         [InlineData(@"graph test {a -- ", new[] { "a" })]
+        [InlineData(@"strict graph {""quoted""}", new[] { "quoted" })]
+        [InlineData(@"strict graph {""quoted text node""}", new[] { "quoted text node" })]
         public void LoadMultipleNodes(string dot, string[] keys)
         {
             DotGraph g = DotLoader.Load(dot);
@@ -212,13 +214,47 @@ namespace AurigaTest.GraphViz
             Assert.True(g.Edges.ContainsKey(Tuple.Create("a", "b")));
         }
 
-        [Fact]
-        public void LoadWrongFormat()
+        [Theory]
+        [InlineData(@"graph {key}", new[] { "graph", "{", "key", "}" })]
+        [InlineData(@"graph {""key""=""val""}", new[] { "graph", "{", "\"key\"", "=", "\"val\"", "}" })]
+        [InlineData(@"graph {""key=val""}", new[] { "graph", "{", "\"key=val\"", "}" })]
+        [InlineData(@"graph G {Welcome}", new[] { "graph", "G", "{", "Welcome", "}" })]
+        public void TokenizerTest(string input, string[] tokens)
         {
-            GraphData g = DotLoader.LoadF(@"digraph {
-	a -> b.
-}");
-            Assert.Equal(0, g.Nodes.Count);
+            var parts = DotLoader.Tokenizer.Tokenize(input);
+            for(int i = 0; i< tokens.Count(); i++)
+            {
+                if (parts.Count() > i)
+                {
+                    Assert.Equal(tokens[i], parts[i]);
+                }
+                else
+                {
+                    Assert.True(false, $"[{string.Join(",", parts)}] contains too few elements");
+                }
+            }
+        }
+
+        [Theory]
+        [InlineData(@"graph ""key"" size", new[] { "graph ", "\"key\"", " size" }, new[] { false, true, false })]
+        [InlineData(@"""key asd d""", new[] { "\"key asd d\"" }, new[] { true })]
+        [InlineData(@"""key \""quoted\"" test""", new[] { "\"key \\\"quoted\\\" test\"" }, new[] { true})]
+        [InlineData(@"foo ""key second"" woah ""common""", new[] { "foo ", "\"key second\"", " woah ", "\"common\"" }, new[] { false, true, false, true })]
+        public void TokenizerQuoteSplitTest(string input, string[] tokens, bool[] isQuoted)
+        {
+            var parts = DotLoader.Tokenizer.SplitQuotedParts(input);
+            for (int i = 0; i < tokens.Count(); i++)
+            {
+                if (parts.Count() > i)
+                {
+                    Assert.Equal(tokens[i], parts[i].token);
+                    Assert.Equal(isQuoted[i], parts[i].isQuoted);
+                }
+                else
+                {
+                    Assert.True(false, $"[{string.Join(",", parts)}] contains too few elements");
+                }
+            }
         }
 
         private static Dictionary<string, string> toDictionary(string[] keyvals)

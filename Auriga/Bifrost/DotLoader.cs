@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace Bifrost
@@ -33,7 +34,7 @@ namespace Bifrost
                 return gr;
             }
 
-            List<string> tokens = tokenize(dotString);
+            List<string> tokens = Tokenizer.Tokenize(dotString);
             tokenIter = tokens.GetEnumerator();
 
             string? first = nextToken();
@@ -77,7 +78,7 @@ namespace Bifrost
                             gr.Nodes.TryAdd(lastToken, new Dot.DotNode());
                             gr.Edges.Add((lastToken, nextNode), new Dot.DotEdge());
                         }
-                        lastToken = nextNode;
+                        lastToken = nextNode.Trim('"');
                     }
                     else if (token == "[")
                     {
@@ -113,7 +114,7 @@ namespace Bifrost
                         {
                             gr.Nodes.TryAdd(lastToken, new Dot.DotNode());
                         }
-                        lastToken = token;
+                        lastToken = token.Trim('"');
                     }
                 }
 
@@ -133,14 +134,79 @@ namespace Bifrost
             return tokenIter.Current;
         }
 
-        private static List<string> tokenize(string text)
+        public class Tokenizer
         {
-            List<string> tokens = new List<string>(
-                text.Split(new[] { " ", "\t", "\n", "\r", "\r\n" }, 
-                StringSplitOptions.RemoveEmptyEntries));
-            tokens = tokens.SelectMany(t => Regex.Split(t, @"([\][}{]|--|->|=)"))
-                .Where(t => !string.IsNullOrWhiteSpace(t)).ToList();
-            return tokens;
+            public static List<string> Tokenize(string text)
+            {
+                List<(bool quoted, string token)> quotedTokens = SplitQuotedParts(text);
+                List<string> tokens = new List<string>();
+                foreach (var token in quotedTokens)
+                {
+                    if (token.quoted)
+                    {
+                        tokens.Add(token.token);
+                    }
+                    else
+                    {
+                        var parts = token.token.Split(new[] { " ", "\t", "\n", "\r", "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
+                        tokens.AddRange(parts.SelectMany(t => Regex.Split(t, @"([\][}{]|--|->|=)"))
+                            .Where(t => !string.IsNullOrWhiteSpace(t)));
+                    }
+                }
+                return tokens;
+            }
+
+            public static List<(bool isQuoted, string token)> SplitQuotedParts(string text)
+            {
+                // possible inputs:
+                // asd "ff" dd
+                // asd "f \"dasd\" f" dd
+                // "f \"dasd\" f"
+                List<(bool isQuoted, string token)> tokens = new List<(bool isQuoted, string token)>();
+                bool inQuote = false;
+                StringBuilder builder = new StringBuilder();
+                void saveToken()
+                {
+                    string token = builder.ToString();
+                    if (!string.IsNullOrEmpty(token))
+                    {
+                        tokens.Add((false, builder.ToString()));
+                        builder.Clear();
+                    }
+                }
+                int escapeCount = 0;
+                foreach (var ch in text)
+                {
+                    if (!inQuote && ch == '"' && escapeCount % 2 == 0)
+                    {
+                        saveToken();
+                        inQuote = true;
+                        builder.Append(ch);
+                        escapeCount = 0;
+                    }
+                    else if (inQuote && ch == '"' && escapeCount % 2 == 0)
+                    {
+                        inQuote = false;
+                        builder.Append(ch);
+                        tokens.Add((true, builder.ToString()));
+                        builder.Clear();
+                        escapeCount = 0;
+                    }
+                    else if (ch == '\\')
+                    {
+                        escapeCount++;
+                        builder.Append(ch);
+                    }
+                    else
+                    {
+                        escapeCount = 0;
+                        builder.Append(ch);
+                    }
+                }
+                saveToken();
+
+                return tokens;
+            }
         }
 
         public static GraphData LoadF(string dotString)
