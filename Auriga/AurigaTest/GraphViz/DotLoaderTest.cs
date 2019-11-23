@@ -77,6 +77,10 @@ namespace AurigaTest.GraphViz
         [InlineData(@"graph test {a -- ", new[] { "a" })]
         [InlineData(@"strict graph {""quoted""}", new[] { "quoted" })]
         [InlineData(@"strict graph {""quoted text node""}", new[] { "quoted text node" })]
+        [InlineData(@"strict graph {""quoted \""text\"" node""}", new[] { "quoted \"text\" node" })]
+        [InlineData(@"strict graph {a;b;}", new[] { "a", "b" })]
+        [InlineData(@"strict graph {a[ke=ve];b;}", new[] { "a", "b" })]
+        [InlineData(@"strict graph {a--b;}", new[] { "a", "b" })]
         public void LoadMultipleNodes(string dot, string[] keys)
         {
             DotGraph g = DotLoader.Load(dot);
@@ -97,6 +101,7 @@ namespace AurigaTest.GraphViz
         [InlineData(@"graph test {a--b -- c}", new[] { "a", "b", "b", "c" })]
         [InlineData(@"digraph test {a -> b}", new[] { "a", "b" })]
         [InlineData(@"digraph test {a->b}", new[] { "a", "b" })]
+        [InlineData(@"digraph test {a->b; d->e}", new[] { "a", "b", "d", "e" })]
         public void LoadGraphEdges(string dot, string[] edgeNodes)
         {
             DotGraph g = DotLoader.Load(dot);
@@ -121,6 +126,8 @@ namespace AurigaTest.GraphViz
         [InlineData(@"graph test {key= val}", new[] { "key", "val" })]
         [InlineData(@"graph test {key =val}", new[] { "key", "val" })]
         [InlineData(@"graph test {key = val size=test}", new[] { "key", "val", "size", "test" })]
+        [InlineData(@"graph test {[key = val]}", new[] { "key", "val" })]
+        [InlineData(@"graph test {a graph [key = val]}", new[] { "key", "val" })]
         public void LoadGraphAttributes(string dot, string[] keyvals)
         {
             DotGraph g = DotLoader.Load(dot);
@@ -136,9 +143,28 @@ namespace AurigaTest.GraphViz
             }
         }
 
+        [Theory]
+        [InlineData(@"graph test {node [key = val]}", new[] { "key", "val" })]
+        [InlineData(@"graph test {a node[key = val]}", new[] { "key", "val" })]
+        public void LoadGlobalNodeAttributes(string dot, string[] keyvals)
+        {
+            DotGraph g = DotLoader.Load(dot);
+
+            var attributes = toDictionary(keyvals);
+            foreach (var attr in attributes)
+            {
+                Assert.Contains(attr, g.NodeAttributes);
+            }
+            foreach (var key in g.NodeAttributes)
+            {
+                Assert.Contains(key, attributes);
+            }
+        }
+
 
         [Theory]
         [InlineData(@"graph test {a[key=val]}", new[] { "key", "val" })]
+        [InlineData(@"graph test {a[key=val test=""rand""]}", new[] { "key", "val", "test", "rand" })]
         public void LoadNodeAttributes(string dot, string[] keyvals)
         {
             DotGraph g = DotLoader.Load(dot);
@@ -206,18 +232,18 @@ namespace AurigaTest.GraphViz
         [Fact]
         public void LoadDirected()
         {
-            GraphData g = DotLoader.LoadF(@"digraph {
-	a -> b;
-}");
+            DotGraph g = DotLoader.Load(@"digraph {	a -> b;}");
             Assert.True(g.IsDirected);
             Assert.Equal(2, g.Nodes.Count);
-            Assert.True(g.Edges.ContainsKey(Tuple.Create("a", "b")));
+            Assert.Contains(("a", "b"), g.Edges);
         }
 
         [Theory]
         [InlineData(@"graph {key}", new[] { "graph", "{", "key", "}" })]
-        [InlineData(@"graph {""key""=""val""}", new[] { "graph", "{", "\"key\"", "=", "\"val\"", "}" })]
-        [InlineData(@"graph {""key=val""}", new[] { "graph", "{", "\"key=val\"", "}" })]
+        [InlineData(@"graph {""key""=""val""}", new[] { "graph", "{", "key", "=", "val", "}" })]
+        [InlineData(@"graph {""key=val""}", new[] { "graph", "{", "key=val", "}" })]
+        [InlineData(@"graph {""key=\""val\""""}", new[] { "graph", "{", "key=\"val\"", "}" })]
+        [InlineData(@"graph {""\""some value\""""}", new[] { "graph", "{", "\"some value\"", "}" })]
         [InlineData(@"graph G {Welcome}", new[] { "graph", "G", "{", "Welcome", "}" })]
         public void TokenizerTest(string input, string[] tokens)
         {
@@ -238,7 +264,7 @@ namespace AurigaTest.GraphViz
         [Theory]
         [InlineData(@"graph ""key"" size", new[] { "graph ", "\"key\"", " size" }, new[] { false, true, false })]
         [InlineData(@"""key asd d""", new[] { "\"key asd d\"" }, new[] { true })]
-        [InlineData(@"""key \""quoted\"" test""", new[] { "\"key \\\"quoted\\\" test\"" }, new[] { true})]
+        [InlineData(@"""key \""quoted\"" test""", new[] { "\"key \"quoted\" test\"" }, new[] { true})]
         [InlineData(@"foo ""key second"" woah ""common""", new[] { "foo ", "\"key second\"", " woah ", "\"common\"" }, new[] { false, true, false, true })]
         public void TokenizerQuoteSplitTest(string input, string[] tokens, bool[] isQuoted)
         {

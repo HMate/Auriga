@@ -82,10 +82,22 @@ namespace Bifrost
                     }
                     else if (token == "[")
                     {
+
                         if (lastToken != null)
                         {
-                            gr.Nodes.TryAdd(lastToken, new Dot.DotNode());
-                            attributeContext = gr.Nodes[lastToken].Attributes;
+                            if(lastToken == "graph")
+                            {
+                                attributeContext = gr.GraphAttributes;
+                            }
+                            else if (lastToken == "node")
+                            {
+                                attributeContext = gr.NodeAttributes;
+                            }
+                            else
+                            {
+                                gr.Nodes.TryAdd(lastToken, new Dot.DotNode());
+                                attributeContext = gr.Nodes[lastToken].Attributes;
+                            }
                         }
                         else
                         {
@@ -108,13 +120,21 @@ namespace Bifrost
                             attributeContext.Add(lastToken, val);
                         lastToken = null;
                     }
+                    else if (token == ";")
+                    {
+                        if (lastToken != null)
+                        {
+                            gr.Nodes.TryAdd(lastToken, new Dot.DotNode());
+                        }
+                        lastToken = null;
+                    }
                     else
                     {
                         if (lastToken != null)
                         {
                             gr.Nodes.TryAdd(lastToken, new Dot.DotNode());
                         }
-                        lastToken = token.Trim('"');
+                        lastToken = token;
                     }
                 }
 
@@ -144,12 +164,12 @@ namespace Bifrost
                 {
                     if (token.quoted)
                     {
-                        tokens.Add(token.token);
+                        tokens.Add(trimSingleQuote(token.token));
                     }
                     else
                     {
                         var parts = token.token.Split(new[] { " ", "\t", "\n", "\r", "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
-                        tokens.AddRange(parts.SelectMany(t => Regex.Split(t, @"([\][}{]|--|->|=)"))
+                        tokens.AddRange(parts.SelectMany(t => Regex.Split(t, @"([\][}{]|--|->|=|;)"))
                             .Where(t => !string.IsNullOrWhiteSpace(t)));
                     }
                 }
@@ -192,6 +212,12 @@ namespace Bifrost
                         builder.Clear();
                         escapeCount = 0;
                     }
+                    else if (inQuote && ch == '"' && escapeCount % 2 == 1)
+                    {
+                        builder.Remove(builder.Length - 1, 1);
+                        builder.Append(ch);
+                        escapeCount = 0;
+                    }
                     else if (ch == '\\')
                     {
                         escapeCount++;
@@ -206,6 +232,20 @@ namespace Bifrost
                 saveToken();
 
                 return tokens;
+            }
+
+            private static string trimSingleQuote(string value)
+            {
+                string result = value;
+                if (result.StartsWith('"'))
+                {
+                    result = result.Substring(1);
+                }
+                if (result.EndsWith('"'))
+                {
+                    result = result.Substring(0, result.Length-1);
+                }
+                return result;
             }
         }
 
