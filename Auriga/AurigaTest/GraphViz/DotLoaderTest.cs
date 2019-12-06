@@ -248,9 +248,12 @@ namespace AurigaTest.GraphViz
                 width = 1.2084,
                 width = 1.2086,
                 shape = ""rose,""];
+            a[color=red] a -- b[color=red, color=""blue""] a[color=green]
         }");
             Assert.Equal("1.2086", g.Nodes["cartographer"].Attributes["width"]);
             Assert.Equal("rose,", g.Nodes["cartographer"].Attributes["shape"]);
+            Assert.Equal("green", g.Nodes["a"].Attributes["color"]);
+            Assert.Equal(3, g.Nodes.Count);
         }
 
         [Fact]
