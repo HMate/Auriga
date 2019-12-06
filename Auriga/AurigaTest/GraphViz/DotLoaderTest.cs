@@ -1,6 +1,5 @@
 using Bifrost;
 using Bifrost.Dot;
-using DotParser;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -118,8 +117,17 @@ namespace AurigaTest.GraphViz
             Assert.Equal(edgePairs.Count, g.Edges.Count);
         }
 
-        // TODO: Missing multiple edges
+        [Fact]
+        public void LoadGraphMultiEdges()
+        {
+            DotGraph g = DotLoader.Load(@"graph test {a -- b[color=red]; a--b}");
 
+            Assert.Equal(2, g.Edges[("a", "b")].Count);
+            Assert.Equal("red", g.Edges[("a", "b")].First().Attributes["color"]);
+            Assert.Equal(1, g.Edges[("a", "b")].First().Attributes.Count);
+            Assert.Equal(0, g.Edges[("a", "b")][1].Attributes.Count);
+        }
+        
         [Theory]
         [InlineData(@"graph test {key=val}", new[] { "key", "val" })]
         [InlineData(@"graph test {key = val}", new[] { "key", "val" })]
@@ -205,7 +213,7 @@ namespace AurigaTest.GraphViz
         [Fact]
         public void LoadDetailed()
         {
-            GraphData g = DotLoader.LoadF(@"graph {
+            DotGraph g = DotLoader.Load(@"graph {
 	graph [bb=""0, 0, 87, 180""];
     node[label = ""\N""];
             cartographer[height = 0.5,
@@ -223,10 +231,26 @@ namespace AurigaTest.GraphViz
         }");
             Assert.False(g.IsDirected);
             Assert.Equal("0, 0, 87, 180", g.GraphAttributes["bb"]);
-            Assert.Equal("N", g.NodeAttributes["label"]);
+            Assert.Equal("\\N", g.NodeAttributes["label"]);
 
-            Assert.Equal("43.5,162", g.Nodes.GetValueOrDefault("a").GetValueOrDefault("pos"));
-            Assert.Equal("43.5,143.7 43.5,132.85 43.5,118.92 43.5,108.1", g.Edges.GetValueOrDefault(Tuple.Create("a", "b")).Head.GetValueOrDefault("pos"));
+            Assert.Equal("43.5,162", g.Nodes["a"].Attributes["pos"]);
+            Assert.Equal("43.5,143.7 43.5,132.85 43.5,118.92 43.5,108.1", g.Edges[("a", "b")].First().Attributes["pos"]);
+        }
+
+        [Fact]
+        public void LoadSameAttribute()
+        {
+            DotGraph g = DotLoader.Load(@"graph {
+            cartographer[height = 0.5,
+                pos = ""43.5,18"",
+                shape = rect,
+                width = 1.2083,
+                width = 1.2084,
+                width = 1.2086,
+                shape = ""rose,""];
+        }");
+            Assert.Equal("1.2086", g.Nodes["cartographer"].Attributes["width"]);
+            Assert.Equal("rose,", g.Nodes["cartographer"].Attributes["shape"]);
         }
 
         [Fact]
@@ -240,6 +264,9 @@ namespace AurigaTest.GraphViz
 
         [Theory]
         [InlineData(@"graph {key}", new[] { "graph", "{", "key", "}" })]
+        [InlineData(@"graph {key=val}", new[] { "graph", "{", "key", "=", "val", "}" })]
+        [InlineData(@"graph {key=val foo=bar}", new[] { "graph", "{", "key", "=", "val", "foo", "=", "bar", "}" })]
+        [InlineData(@"graph {key=val, foo=bar}", new[] { "graph", "{", "key", "=", "val", ",", "foo", "=", "bar", "}" })]
         [InlineData(@"graph {""key""=""val""}", new[] { "graph", "{", "key", "=", "val", "}" })]
         [InlineData(@"graph {""key=val""}", new[] { "graph", "{", "key=val", "}" })]
         [InlineData(@"graph {""key=\""val\""""}", new[] { "graph", "{", "key=\"val\"", "}" })]

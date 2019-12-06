@@ -1,5 +1,4 @@
-﻿using DotParser;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -63,47 +62,32 @@ namespace Bifrost
             {
                 string? lastToken = null;
                 IDictionary<string, string> attributeContext = gr.GraphAttributes;
-                for (string? token = nextToken(); token != "}" && token != null; token = nextToken())
+                for (string? token = nextToken(), nextTok = nextToken(); 
+                    token != "}" && token != null; 
+                    token = nextTok, nextTok = nextToken())
                 {
                     if(token == "--" || token == "->")
                     {
-                        string? nextNode = nextToken();
-                        if (nextNode == null || nextNode == "}")
+                        if (nextTok == null || nextTok == "}")
                         {
                             break;
                         }
-                        gr.Nodes.TryAdd(nextNode, new Dot.DotNode());
+                        gr.Nodes.TryAdd(nextTok, new Dot.DotNode());
                         if (lastToken != null)
                         {
-                            gr.Nodes.TryAdd(lastToken, new Dot.DotNode());
-                            gr.Edges.Add((lastToken, nextNode), new Dot.DotEdge());
+                            if(!gr.Edges.ContainsKey((lastToken, nextTok)))
+                            {
+                                gr.Edges.Add((lastToken, nextTok), new List<Dot.DotEdge>());
+                            }
+                            var edge = new Dot.DotEdge();
+                            gr.Edges[(lastToken, nextTok)].Add(edge);
+                            attributeContext = edge.Attributes;
                         }
-                        lastToken = nextNode.Trim('"');
+                        token = nextTok;
+                        nextTok = nextToken();
                     }
                     else if (token == "[")
                     {
-
-                        if (lastToken != null)
-                        {
-                            if(lastToken == "graph")
-                            {
-                                attributeContext = gr.GraphAttributes;
-                            }
-                            else if (lastToken == "node")
-                            {
-                                attributeContext = gr.NodeAttributes;
-                            }
-                            else
-                            {
-                                gr.Nodes.TryAdd(lastToken, new Dot.DotNode());
-                                attributeContext = gr.Nodes[lastToken].Attributes;
-                            }
-                        }
-                        else
-                        {
-                            attributeContext = gr.GraphAttributes;
-                        }
-                        lastToken = null;
                     }
                     else if (token == "]")
                     {
@@ -111,36 +95,35 @@ namespace Bifrost
                     }
                     else if(token == "=")
                     {
-                        string? val = nextToken();
-                        if (val == null || val == "}")
+                        if (nextTok == null || nextTok == "}")
                         {
                             break;
                         }
                         if (lastToken != null)
-                            attributeContext.Add(lastToken, val);
-                        lastToken = null;
-                    }
-                    else if (token == ";")
-                    {
-                        if (lastToken != null)
                         {
-                            gr.Nodes.TryAdd(lastToken, new Dot.DotNode());
+                            if(!attributeContext.TryAdd(lastToken, nextTok))
+                                attributeContext[lastToken] = nextTok;
                         }
-                        lastToken = null;
+                        token = nextTok;
+                        nextTok = nextToken();
                     }
-                    else
+                    else if (token == ";" || token == ",")
                     {
-                        if (lastToken != null)
-                        {
-                            gr.Nodes.TryAdd(lastToken, new Dot.DotNode());
-                        }
-                        lastToken = token;
                     }
-                }
-
-                if (lastToken != null)
-                {
-                    gr.Nodes.TryAdd(lastToken, new Dot.DotNode());
+                    else if (token == "graph")
+                    {
+                        attributeContext = gr.GraphAttributes;
+                    }
+                    else if (token == "node")
+                    {
+                        attributeContext = gr.NodeAttributes;
+                    }
+                    else if (nextTok != "=")
+                    {
+                        gr.Nodes.TryAdd(token, new Dot.DotNode());
+                        attributeContext = gr.Nodes[token].Attributes;
+                    }
+                    lastToken = token;
                 }
             }
 
@@ -154,7 +137,7 @@ namespace Bifrost
             return tokenIter.Current;
         }
 
-        public class Tokenizer
+        public static class Tokenizer
         {
             public static List<string> Tokenize(string text)
             {
@@ -169,7 +152,7 @@ namespace Bifrost
                     else
                     {
                         var parts = token.token.Split(new[] { " ", "\t", "\n", "\r", "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
-                        tokens.AddRange(parts.SelectMany(t => Regex.Split(t, @"([\][}{]|--|->|=|;)"))
+                        tokens.AddRange(parts.SelectMany(t => Regex.Split(t, @"([\][}{]|--|->|=|;|,)"))
                             .Where(t => !string.IsNullOrWhiteSpace(t)));
                     }
                 }
@@ -247,22 +230,6 @@ namespace Bifrost
                 }
                 return result;
             }
-        }
-
-        public static GraphData LoadF(string dotString)
-        {
-            try
-            {
-                GraphData gr = DotParser.DotParser.parse(dotString);
-                return gr;
-            }
-#pragma warning disable CA1031 // Do not catch general exception types -> Sadly DotParser throws System.Exception
-            catch (Exception)
-            {
-                return DotParser.DotParser.parse("graph{}");
-            }
-#pragma warning restore CA1031 // Do not catch general exception types
-
         }
     }
 }
