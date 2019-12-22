@@ -22,7 +22,7 @@ namespace Bifrost
             DotLoader loader = new DotLoader(dotString);
             return loader.Load();
         }
-
+        
         public Dot.DotGraph Load()
         {
             Dot.DotGraph gr = new Dot.DotGraph();

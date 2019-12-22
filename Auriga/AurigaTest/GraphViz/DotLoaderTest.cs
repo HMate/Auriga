@@ -237,6 +237,51 @@ namespace AurigaTest.GraphViz
             Assert.Equal("43.5,143.7 43.5,132.85 43.5,118.92 43.5,108.1", g.Edges[("a", "b")].First().Attributes["pos"]);
         }
 
+        [Fact(Skip ="Not implemented features")]
+        public void MissingFeatures()
+        {
+            // TODO: Missing feaures for loader
+            // - More than one node on right side
+            // - subgraph
+            DotGraph g = DotLoader.Load(@"graph {
+                rankdir=LR;
+                a -- { b c d }; b -- { c e }; c -- { e f }; d -- { f g }; e -- h;
+                f -- { h i j g }; g -- k; h -- { o l }; i -- { l m j }; j -- { m n k };
+                k -- { n r }; l -- { o m }; m -- { o p n }; n -- { q r };
+                o -- { s p }; p -- { s t q }; q -- { t r }; r -- t; s -- z; t -- z;
+                { rank=same; b, c, d }
+                { rank=same; e, f, g }
+                { rank=same; h, i, j, k }
+                { rank=same; l, m, n }
+                { rank=same; o, p, q, r }
+                { rank=same; s, t }
+            }");
+            Assert.Contains(("a", "b"), g.Edges);
+            Assert.Contains(("a", "c"), g.Edges);
+            Assert.Contains(("a", "d"), g.Edges);
+
+            DotGraph g2 = DotLoader.Load(@"graph {
+                splines=line;
+                subgraph cluster_0 {
+                    label=""Subgraph A"";
+                    a; b; c
+                }
+
+                subgraph cluster_1
+                {
+                    label=""Subgraph B"";
+                    d; e;
+                }
+
+                a -- e;
+                a -- d;
+                b -- d;
+                b -- e;
+                c -- d;
+                c -- e;
+            }");
+        }
+
         [Fact]
         public void LoadSameAttribute()
         {
