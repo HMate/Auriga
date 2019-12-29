@@ -5,12 +5,23 @@ using System.Windows;
 
 namespace Bifrost
 {
+    /// <summary>
+    /// Converts a DotGraph to the Graph representation which Auriga uses internally.
+    /// </summary>
     public class DotGraphConverter
     {
+        /// <summary>
+        /// Creates a Graph from a DotGraph that contains "bb" graph property and "pos" properties for every node.
+        /// </summary>
+        /// <param name="dot"></param>
+        /// <returns><see cref="Graph"/>></returns>
         public static Graph ToGraph(Dot.DotGraph dot)
         {
             Graph result = new Graph();
-            Rect bb = parseDotBoundingBox(dot.GraphAttributes["bb"]);
+            Rect bb = new Rect(0, 0, 100, 100);
+            if (dot.GraphAttributes.ContainsKey("bb"))
+                bb = parseDotBoundingBox(dot.GraphAttributes["bb"]);
+
             Dictionary<string, Node> nodes = new Dictionary<string, Node>();
             foreach (var dotNode in dot.Nodes)
             {
@@ -28,7 +39,7 @@ namespace Bifrost
             return result;
         }
 
-        private static Rect parseDotBoundingBox(string? boundBoxString)
+        private static Rect parseDotBoundingBox(string boundBoxString)
         {
             Rect lbwh = Rect.Parse(boundBoxString);
             return new Rect(lbwh.Location, new Size(lbwh.Width, lbwh.Height));

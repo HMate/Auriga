@@ -99,13 +99,19 @@ namespace Auriga.Views
             }
         }
 
-        internal void LoadGraph(Graph gr)
+        /// <summary>
+        /// Loads the given graph to the center of the viewport.
+        /// </summary>
+        /// <param name="gr"></param>
+        /// <param name="viewport"></param>
+        internal void LoadGraph(Graph gr, Rect viewport)
         {
-            ClearGraph();
             Dictionary<Guid, GraphNode> nodes = new Dictionary<Guid, GraphNode>();
             foreach (var node in gr.Nodes)
             {
-                nodes.Add(node.Id, AddNode(node.NodeName, node.Position));
+                var nodeRect = AddNode(node.NodeName, node.Position);
+                MoveChild(nodeRect, new Point(viewport.Left + viewport.Width/2d, viewport.Top + viewport.Height/ 2d));
+                nodes.Add(node.Id, nodeRect);
             }
 
             foreach (var edge in gr.Edges)
@@ -256,6 +262,13 @@ namespace Auriga.Views
                     node.IsSelected = false;
                 }
             }
+        }
+
+        private void MoveChild(GraphNode node, Point offset)
+        {
+            var curPos = node.GetLeftTop();
+            SetLeft(node, curPos.X + offset.X);
+            SetTop(node, curPos.Y + offset.Y);
         }
     }
 }

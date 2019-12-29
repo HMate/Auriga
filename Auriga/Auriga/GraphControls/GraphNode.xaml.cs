@@ -40,18 +40,33 @@ namespace Auriga.GraphControls
             NodeName = name;
         }
 
+        public Point GetLeftTop()
+        {
+            return new Point((double)GetValue(Canvas.LeftProperty), (double)GetValue(Canvas.TopProperty));
+        }
+
         public Point GetBottomArrowAttachPoint()
         {
-            var arrowPos = new Point((double)GetValue(Canvas.LeftProperty), (double)GetValue(Canvas.TopProperty));
-            arrowPos.Offset(ActualWidth / 2d, ActualHeight);
-            return arrowPos;
+            var pos = GetLeftTop();
+            Size offset = new Size(ActualWidth / 2d, ActualHeight);
+            if(offset.Width == 0d || offset.Height == 0d)
+            {
+                offset = new Size(DesiredSize.Width / 2d, DesiredSize.Height);
+            }
+            pos.Offset(offset.Width, offset.Height);
+            return pos;
         }
 
         internal Point GetTopArrowAttachPoint()
         {
-            var arrowPos = new Point((double)GetValue(Canvas.LeftProperty), (double)GetValue(Canvas.TopProperty));
-            arrowPos.Offset(ActualWidth / 2d, 0);
-            return arrowPos;
+            var pos = GetLeftTop();
+            Size offset = new Size(ActualWidth / 2d, 0d);
+            if (offset.Width == 0d)
+            {
+                offset = new Size(DesiredSize.Width / 2d, 0);
+            }
+            pos.Offset(offset.Width, offset.Height);
+            return pos;
         }
     }
 }

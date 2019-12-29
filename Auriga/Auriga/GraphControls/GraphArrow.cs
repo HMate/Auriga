@@ -177,18 +177,23 @@ namespace Auriga.GraphControls
 
         private void RegisterNodePosChanged(GraphNode node, EventHandler handler)
         {
-            var descriptorLeft = DependencyPropertyDescriptor.FromProperty(Canvas.LeftProperty, typeof(GraphNode));
-            descriptorLeft.AddValueChanged(node, handler);
-            var descriptorTop = DependencyPropertyDescriptor.FromProperty(Canvas.TopProperty, typeof(GraphNode));
-            descriptorTop.AddValueChanged(node, handler);
+            GetGraphNodePropDescriptor(Canvas.LeftProperty).AddValueChanged(node, handler);
+            GetGraphNodePropDescriptor(Canvas.TopProperty).AddValueChanged(node, handler);
+            GetGraphNodePropDescriptor(ActualWidthProperty).AddValueChanged(node, handler);
+            GetGraphNodePropDescriptor(ActualHeightProperty).AddValueChanged(node, handler);
         }
 
         private void RemoveNodePosChanged(GraphNode node, EventHandler handler)
         {
-            var descriptorLeft = DependencyPropertyDescriptor.FromProperty(Canvas.LeftProperty, typeof(GraphNode));
-            descriptorLeft.RemoveValueChanged(node, handler);
-            var descriptorTop = DependencyPropertyDescriptor.FromProperty(Canvas.TopProperty, typeof(GraphNode));
-            descriptorTop.RemoveValueChanged(node, handler);
+            GetGraphNodePropDescriptor(Canvas.LeftProperty).RemoveValueChanged(node, handler);
+            GetGraphNodePropDescriptor(Canvas.TopProperty).RemoveValueChanged(node, handler);
+            GetGraphNodePropDescriptor(ActualWidthProperty).RemoveValueChanged(node, handler);
+            GetGraphNodePropDescriptor(ActualHeightProperty).RemoveValueChanged(node, handler);
+        }
+
+        private DependencyPropertyDescriptor GetGraphNodePropDescriptor(DependencyProperty dp)
+        {
+            return DependencyPropertyDescriptor.FromProperty(dp, typeof(GraphNode));
         }
     }
 }
