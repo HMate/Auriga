@@ -44,5 +44,11 @@ namespace Bifrost
             Rect lbwh = Rect.Parse(boundBoxString);
             return new Rect(lbwh.Location, new Size(lbwh.Width, lbwh.Height));
         }
+
+        public static Dot.DotGraph ToDot(Graph gr)
+        {
+            Dot.DotGraph result = new Dot.DotGraph();
+            return result;
+        }
     }
 }

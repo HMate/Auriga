@@ -40,6 +40,16 @@ namespace AurigaTest.GraphViz
             Assert.Equal(nodeA, graph.FindNode(edges[0].StartId));
             Assert.Equal(nodeB, graph.FindNode(edges[0].EndId));
         }
+
+        [Fact]
+        public void ConvertBifrostGraphToDotGraph()
+        {
+            Graph g = new Graph();
+            g.AddNode(System.Guid.Parse("054B46D7-6B2E-46A6-A7C3-16A31C9E1A53"), "alpha");
+            DotGraph result = DotGraphConverter.ToDot(g);
+
+            Assert.Contains("alpha", result.Nodes);
+        }
     }
 }
 

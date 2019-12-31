@@ -9,6 +9,13 @@ namespace Bifrost.GraphElements
         public ICollection<Node> Nodes { get; } = new List<Node>();
         public ICollection<Edge> Edges { get; } = new List<Edge>();
 
+        public Node AddNode(Guid id, string nodeName)
+        {
+            Node n = new Node(id, nodeName);
+            Nodes.Add(n);
+            return n;
+        }
+
         public Node AddNode(Guid id, string nodeName, Point pos)
         {
             Node n = new Node(id, nodeName, pos);

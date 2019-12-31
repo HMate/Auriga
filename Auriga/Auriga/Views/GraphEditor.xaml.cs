@@ -52,5 +52,14 @@ namespace Auriga.Views
                 GraphArea.LoadGraph(gr, GraphAreaZoom.Viewport);
             }
         }
+
+        private void Button_ClickSaveDotFile(object sender, RoutedEventArgs e)
+        {
+            SaveFileDialog dialog = new SaveFileDialog();
+            if (true == dialog.ShowDialog())
+            {
+                Debug.WriteLine($"Saving: {dialog.FileName}");
+            }
+        }
     }
 }

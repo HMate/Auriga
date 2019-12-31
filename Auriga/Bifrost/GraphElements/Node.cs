@@ -9,6 +9,9 @@ namespace Bifrost.GraphElements
         public string NodeName;
         public Point Position;
 
+        public Node(Guid id, string nodeName) : this(id, nodeName, new Point(0d, 0d))
+        {}
+
         public Node(Guid id, string nodeName, Point pos)
         {
             Id = id;
