@@ -48,6 +48,22 @@ namespace Bifrost
         public static Dot.DotGraph ToDot(Graph gr)
         {
             Dot.DotGraph result = new Dot.DotGraph();
+            foreach (var node in gr.Nodes)
+            {
+                Dot.DotNode dotNode = new Dot.DotNode();
+                dotNode.Attributes.Add("label", node.NodeName);
+                result.Nodes.Add(node.Id.ToString(), dotNode);
+            }
+            foreach (var edge in gr.Edges)
+            {
+                var key = (edge.StartId.ToString(), edge.EndId.ToString());
+                if (!result.Edges.ContainsKey(key))
+                {
+                    result.Edges.Add(key, new List<Dot.DotEdge>());
+                }
+                Dot.DotEdge dotEdge = new Dot.DotEdge();
+                result.Edges[key].Add(dotEdge);
+            }
             return result;
         }
     }

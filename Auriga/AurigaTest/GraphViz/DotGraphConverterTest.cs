@@ -42,13 +42,37 @@ namespace AurigaTest.GraphViz
         }
 
         [Fact]
-        public void ConvertBifrostGraphToDotGraph()
+        public void ConvertBifrostGraphToDotGraphSingleNode()
         {
             Graph g = new Graph();
-            g.AddNode(System.Guid.Parse("054B46D7-6B2E-46A6-A7C3-16A31C9E1A53"), "alpha");
-            DotGraph result = DotGraphConverter.ToDot(g);
+            g.AddNode(System.Guid.Parse("054b46d7-6b2e-46a6-a7c3-16a31c9e1a53"), "alpha");
+            DotGraph dot = DotGraphConverter.ToDot(g);
 
-            Assert.Contains("alpha", result.Nodes);
+            assertDotContainsNode(dot, "054b46d7-6b2e-46a6-a7c3-16a31c9e1a53", "alpha");
+        }
+
+        [Fact]
+        public void ConvertBifrostGraphToDotGraphSingleEdge()
+        {
+            Graph g = new Graph();
+            g.AddNode(System.Guid.Parse("7cbeb388-085b-4087-9fec-50d7f180e334"), "beta");
+            g.AddNode(System.Guid.Parse("29a0c384-49b7-472b-814a-01e8e5453025"), "theta");
+            g.AddEdge(System.Guid.Parse("7cbeb388-085b-4087-9fec-50d7f180e334"), 
+                System.Guid.Parse("29a0c384-49b7-472b-814a-01e8e5453025"));
+            DotGraph dot = DotGraphConverter.ToDot(g);
+
+            assertDotContainsNode(dot, "7cbeb388-085b-4087-9fec-50d7f180e334", "beta");
+            assertDotContainsNode(dot, "29a0c384-49b7-472b-814a-01e8e5453025", "theta");
+
+            Assert.Contains(("7cbeb388-085b-4087-9fec-50d7f180e334", "29a0c384-49b7-472b-814a-01e8e5453025"), dot.Edges);
+        }
+
+        private void assertDotContainsNode(DotGraph dot, string id, string name)
+        {
+            Assert.Contains(id, dot.Nodes);
+            var node = dot.Nodes[id];
+            Assert.Contains("label", node.Attributes);
+            Assert.Equal(name, node.Attributes["label"]);
         }
     }
 }
