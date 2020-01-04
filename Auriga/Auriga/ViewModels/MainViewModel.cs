@@ -25,6 +25,8 @@ namespace Auriga.ViewModels
 
         public ICommand ShowGraphEditor => new RelayCommand(p => CurrentCentralView = new GraphEditor());
 
+        public ICommand ShowDotEditor => new RelayCommand(p => CurrentCentralView = new DotFileEditorView());
+
         public event PropertyChangedEventHandler? PropertyChanged;
     }
 }

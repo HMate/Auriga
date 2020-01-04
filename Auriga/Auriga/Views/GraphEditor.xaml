@@ -5,7 +5,6 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:views="clr-namespace:Auriga.Views"
              xmlns:zoom="http://schemas.xceed.com/wpf/xaml/toolkit"
-             xmlns:graph="clr-namespace:Auriga.GraphControls"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>

@@ -46,10 +46,7 @@ namespace Auriga.Views
             {
                 Debug.WriteLine($"Opening: {dialog.FileName}");
                 string content = File.ReadAllText(dialog.FileName);
-                Graph gr = DotGraphConverter.ToGraph(DotLoader.Load(content));
-
-                GraphArea.ClearGraph();
-                GraphArea.LoadGraph(gr, GraphAreaZoom.Viewport);
+                LoadDotString(content);
             }
         }
 
@@ -60,6 +57,21 @@ namespace Auriga.Views
             {
                 Debug.WriteLine($"Saving: {dialog.FileName}");
             }
+        }
+
+        public void LoadDotString(string dotContent)
+        {
+            Graph gr = DotGraphConverter.ToGraph(DotLoader.Load(dotContent));
+
+            GraphArea.ClearGraph();
+            GraphArea.LoadGraph(gr, GraphAreaZoom.Viewport);
+        }
+
+        public string SerializeGraphAsDotString()
+        {
+            DotGraph gr = DotGraphConverter.ToDot(GraphArea.ToGraph());
+            string dot = DotFileGenerator.Serialize(gr);
+            return dot;
         }
     }
 }

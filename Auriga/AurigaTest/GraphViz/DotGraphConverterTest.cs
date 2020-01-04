@@ -42,6 +42,19 @@ namespace AurigaTest.GraphViz
         }
 
         [Fact]
+        public void ConvertDotGraphToBifrostGraphSingleNode()
+        {
+            DotGraph g = DotLoader.Load(@"graph {a}");
+            Graph graph = DotGraphConverter.ToGraph(g);
+            Assert.Equal(1, graph.Nodes.Count);
+            var nodes = graph.Nodes.ToList();
+
+            var nodeA = nodes[0];
+            Assert.Equal("a", nodeA.NodeName);
+            Assert.Equal(new Point(0, 0), nodeA.Position);
+        }
+
+        [Fact]
         public void ConvertBifrostGraphToDotGraphSingleNode()
         {
             Graph g = new Graph();

@@ -25,9 +25,13 @@ namespace Bifrost.Dot
             Dictionary<string, Node> nodes = new Dictionary<string, Node>();
             foreach (var dotNode in dot.Nodes)
             {
-                Point p = Point.Parse(dotNode.Value.Attributes["pos"]);
-                // Have to flip position, because WPF orig is leftop, graphviz is leftbot
-                p = new Point(p.X, bb.Bottom - p.Y);
+                Point p = new Point(0, 0);
+                if (dotNode.Value.Attributes.ContainsKey("pos"))
+                {
+                    p = Point.Parse(dotNode.Value.Attributes["pos"]);
+                    // Have to flip position, because WPF orig is leftop, graphviz is leftbot
+                    p = new Point(p.X, bb.Bottom - p.Y);
+                }
                 Node n = result.AddNode(Guid.NewGuid(), dotNode.Key, p);
                 nodes.Add(dotNode.Key, n);
             }
