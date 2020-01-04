@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Windows;
 
-namespace Bifrost
+namespace Bifrost.Dot
 {
     /// <summary>
     /// Converts a DotGraph to the Graph representation which Auriga uses internally.
@@ -15,7 +15,7 @@ namespace Bifrost
         /// </summary>
         /// <param name="dot"></param>
         /// <returns><see cref="Graph"/>></returns>
-        public static Graph ToGraph(Dot.DotGraph dot)
+        public static Graph ToGraph(DotGraph dot)
         {
             Graph result = new Graph();
             Rect bb = new Rect(0, 0, 100, 100);
@@ -45,12 +45,12 @@ namespace Bifrost
             return new Rect(lbwh.Location, new Size(lbwh.Width, lbwh.Height));
         }
 
-        public static Dot.DotGraph ToDot(Graph gr)
+        public static DotGraph ToDot(Graph gr)
         {
-            Dot.DotGraph result = new Dot.DotGraph();
+            DotGraph result = new DotGraph();
             foreach (var node in gr.Nodes)
             {
-                Dot.DotNode dotNode = new Dot.DotNode();
+                DotNode dotNode = new DotNode();
                 dotNode.Attributes.Add("label", node.NodeName);
                 result.Nodes.Add(node.Id.ToString(), dotNode);
             }
@@ -59,9 +59,9 @@ namespace Bifrost
                 var key = (edge.StartId.ToString(), edge.EndId.ToString());
                 if (!result.Edges.ContainsKey(key))
                 {
-                    result.Edges.Add(key, new List<Dot.DotEdge>());
+                    result.Edges.Add(key, new List<DotEdge>());
                 }
-                Dot.DotEdge dotEdge = new Dot.DotEdge();
+                DotEdge dotEdge = new DotEdge();
                 result.Edges[key].Add(dotEdge);
             }
             return result;

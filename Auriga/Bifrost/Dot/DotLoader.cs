@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace Bifrost
+namespace Bifrost.Dot
 {
     public class DotLoader
     {
@@ -17,15 +17,15 @@ namespace Bifrost
             this.dotString = dotString;
         }
 
-        public static Dot.DotGraph Load(string dotString)
+        public static DotGraph Load(string dotString)
         {
             DotLoader loader = new DotLoader(dotString);
             return loader.Load();
         }
         
-        public Dot.DotGraph Load()
+        public DotGraph Load()
         {
-            Dot.DotGraph gr = new Dot.DotGraph();
+            DotGraph gr = new DotGraph();
             dotString = dotString.Trim();
 
             if(dotString.Length < 7)
@@ -72,14 +72,14 @@ namespace Bifrost
                         {
                             break;
                         }
-                        gr.Nodes.TryAdd(nextTok, new Dot.DotNode());
+                        gr.Nodes.TryAdd(nextTok, new DotNode());
                         if (lastToken != null)
                         {
                             if(!gr.Edges.ContainsKey((lastToken, nextTok)))
                             {
-                                gr.Edges.Add((lastToken, nextTok), new List<Dot.DotEdge>());
+                                gr.Edges.Add((lastToken, nextTok), new List<DotEdge>());
                             }
-                            var edge = new Dot.DotEdge();
+                            var edge = new DotEdge();
                             gr.Edges[(lastToken, nextTok)].Add(edge);
                             attributeContext = edge.Attributes;
                         }
@@ -120,7 +120,7 @@ namespace Bifrost
                     }
                     else if (nextTok != "=")
                     {
-                        gr.Nodes.TryAdd(token, new Dot.DotNode());
+                        gr.Nodes.TryAdd(token, new DotNode());
                         attributeContext = gr.Nodes[token].Attributes;
                     }
                     lastToken = token;

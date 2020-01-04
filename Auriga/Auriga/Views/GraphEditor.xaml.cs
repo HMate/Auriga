@@ -1,4 +1,4 @@
-﻿using Bifrost;
+﻿using Bifrost.Dot;
 using Bifrost.GraphElements;
 using Microsoft.Win32;
 using System.Collections.Generic;

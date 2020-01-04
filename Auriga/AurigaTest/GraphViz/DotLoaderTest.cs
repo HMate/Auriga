@@ -1,4 +1,3 @@
-using Bifrost;
 using Bifrost.Dot;
 using System;
 using System.Collections.Generic;
