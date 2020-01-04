@@ -133,6 +133,7 @@ namespace AurigaTest.GraphViz
         [InlineData(@"graph test {key= val}", new[] { "key", "val" })]
         [InlineData(@"graph test {key =val}", new[] { "key", "val" })]
         [InlineData(@"graph test {key = val size=test}", new[] { "key", "val", "size", "test" })]
+        [InlineData(@"graph test {key = val, size=test, ""next""=""val""}", new[] { "key", "val", "size", "test", "next", "val" })]
         [InlineData(@"graph test {[key = val]}", new[] { "key", "val" })]
         [InlineData(@"graph test {a graph [key = val]}", new[] { "key", "val" })]
         public void LoadGraphAttributes(string dot, string[] keyvals)
