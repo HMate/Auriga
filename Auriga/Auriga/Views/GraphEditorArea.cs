@@ -104,7 +104,7 @@ namespace Auriga.Views
         /// </summary>
         /// <param name="gr"></param>
         /// <param name="viewport"></param>
-        internal void LoadGraph(Graph gr)
+        public void LoadGraph(Graph gr)
         {
             Dictionary<Guid, GraphNode> nodes = new Dictionary<Guid, GraphNode>();
             foreach (var node in gr.Nodes)
