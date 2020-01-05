@@ -5,7 +5,7 @@ namespace Bifrost.GraphElements
 {
     public class Node
     {
-        public Guid Id;
+        public Guid Id; // TODO: Change Id to string
         public string NodeName;
         public Point Position;
 

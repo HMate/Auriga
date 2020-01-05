@@ -10,6 +10,8 @@ namespace AurigaTest.GraphViz
 {
     public class DotGraphConverterTest
     {
+        #region Dot -> Graph
+
         [Fact]
         public void ConvertDotGraphToBifrostGraph()
         {
@@ -54,6 +56,24 @@ namespace AurigaTest.GraphViz
             Assert.Equal(new Point(0, 0), nodeA.Position);
         }
 
+
+        [Fact]
+        public void ConvertDotGraphToBifrostGraphUseLabelForName()
+        {
+            DotGraph g = DotLoader.Load(@"digraph {
+            a[label=""good name""];
+        }");
+            Graph graph = DotGraphConverter.ToGraph(g);
+            Assert.Equal(1, graph.Nodes.Count);
+            var nodes = graph.Nodes.ToList();
+
+            var nodeA = nodes[0];
+            Assert.Equal("good name", nodeA.NodeName);
+        }
+
+        #endregion
+        #region Graph -> Dot
+
         [Fact]
         public void ConvertBifrostGraphToDotGraphSingleNode()
         {
@@ -87,6 +107,7 @@ namespace AurigaTest.GraphViz
             Assert.Contains("label", node.Attributes);
             Assert.Equal(name, node.Attributes["label"]);
         }
+
+        #endregion
     }
 }
-

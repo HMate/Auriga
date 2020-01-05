@@ -32,7 +32,15 @@ namespace Bifrost.Dot
                     // Have to flip position, because WPF orig is leftop, graphviz is leftbot
                     p = new Point(p.X, bb.Bottom - p.Y);
                 }
-                Node n = result.AddNode(Guid.NewGuid(), dotNode.Key, p);
+
+                string id = dotNode.Key;
+                string name = dotNode.Key;
+                if(dotNode.Value.Attributes.ContainsKey("label"))
+                {
+                    name = dotNode.Value.Attributes["label"];
+                }
+
+                Node n = result.AddNode(Guid.NewGuid(), name, p);
                 nodes.Add(dotNode.Key, n);
             }
             foreach (var dotEdge in dot.Edges)
