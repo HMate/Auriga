@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Bifrost.GraphElements;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
@@ -58,11 +59,13 @@ namespace Auriga.Views
         {
             if (Toolbar1.IsAncestorOf((DependencyObject)e.Source))
             {
-
+                Graph g = GraphEditor1.CurrentGraph();
+                GraphEditor2.LoadGraph(g);
             }
             if (Toolbar2.IsAncestorOf((DependencyObject)e.Source))
             {
-
+                Graph g = GraphEditor2.CurrentGraph();
+                GraphEditor1.LoadGraph(g);
             }
         }
     }

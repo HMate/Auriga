@@ -62,9 +62,13 @@ namespace Auriga.Views
         public void LoadDotString(string dotContent)
         {
             Graph gr = DotGraphConverter.ToGraph(DotLoader.Load(dotContent));
-
-            GraphArea.ClearGraph();
-            GraphArea.LoadGraph(gr, GraphAreaZoom.Viewport);
+            Rect viewport = GraphAreaZoom.Viewport;
+            Vector viewportCenterOffset = new Vector(viewport.Left + viewport.Width / 2d, viewport.Top + viewport.Height / 2d);
+            foreach (var node in gr.Nodes)
+            {
+                node.Position += (Vector)node.Position + viewportCenterOffset;
+            }
+            LoadGraph(gr);
         }
 
         public string SerializeGraphAsDotString()
@@ -72,6 +76,14 @@ namespace Auriga.Views
             DotGraph gr = DotGraphConverter.ToDot(GraphArea.ToGraph());
             string dot = DotFileGenerator.Serialize(gr);
             return dot;
+        }
+
+        public Graph CurrentGraph() => GraphArea.ToGraph();
+
+        public void LoadGraph(Graph gr)
+        {
+            GraphArea.ClearGraph();
+            GraphArea.LoadGraph(gr);
         }
     }
 }

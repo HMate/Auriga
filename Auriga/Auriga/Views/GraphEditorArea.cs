@@ -104,15 +104,12 @@ namespace Auriga.Views
         /// </summary>
         /// <param name="gr"></param>
         /// <param name="viewport"></param>
-        internal void LoadGraph(Graph gr, Rect viewport)
+        internal void LoadGraph(Graph gr)
         {
             Dictionary<Guid, GraphNode> nodes = new Dictionary<Guid, GraphNode>();
-            Point viewportCenterOffset = new Point(viewport.Left + viewport.Width / 2d, viewport.Top + viewport.Height / 2d);
             foreach (var node in gr.Nodes)
             {
                 var nodeRect = AddNode(node.NodeName, node.Position);
-                MoveChild(nodeRect, nodeRect.GetLeftTop()); // double the distances, to move nodes farther away from eachother.
-                MoveChild(nodeRect, viewportCenterOffset);
                 nodes.Add(node.Id, nodeRect);
             }
 
