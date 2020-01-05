@@ -78,7 +78,7 @@ namespace AurigaTest.GraphViz
         public void ConvertBifrostGraphToDotGraphSingleNode()
         {
             Graph g = new Graph();
-            g.AddNode(System.Guid.Parse("054b46d7-6b2e-46a6-a7c3-16a31c9e1a53"), "alpha");
+            g.AddNode(new Node("054b46d7-6b2e-46a6-a7c3-16a31c9e1a53", "alpha"));
             DotGraph dot = DotGraphConverter.ToDot(g);
 
             assertDotContainsNode(dot, "054b46d7-6b2e-46a6-a7c3-16a31c9e1a53", "alpha");
@@ -88,16 +88,14 @@ namespace AurigaTest.GraphViz
         public void ConvertBifrostGraphToDotGraphSingleEdge()
         {
             Graph g = new Graph();
-            g.AddNode(System.Guid.Parse("7cbeb388-085b-4087-9fec-50d7f180e334"), "beta");
-            g.AddNode(System.Guid.Parse("29a0c384-49b7-472b-814a-01e8e5453025"), "theta");
-            g.AddEdge(System.Guid.Parse("7cbeb388-085b-4087-9fec-50d7f180e334"), 
-                System.Guid.Parse("29a0c384-49b7-472b-814a-01e8e5453025"));
+            g.AddNode(new Node("id1", "beta"));
+            g.AddNode(new Node("id2", "theta"));
+            g.AddEdge(new Edge("id1", "id2"));
             DotGraph dot = DotGraphConverter.ToDot(g);
 
-            assertDotContainsNode(dot, "7cbeb388-085b-4087-9fec-50d7f180e334", "beta");
-            assertDotContainsNode(dot, "29a0c384-49b7-472b-814a-01e8e5453025", "theta");
-
-            Assert.Contains(("7cbeb388-085b-4087-9fec-50d7f180e334", "29a0c384-49b7-472b-814a-01e8e5453025"), dot.Edges);
+            assertDotContainsNode(dot, "id1", "beta");
+            assertDotContainsNode(dot, "id2", "theta");
+            Assert.Contains(("id1", "id2"), dot.Edges);
         }
 
         private void assertDotContainsNode(DotGraph dot, string id, string name)

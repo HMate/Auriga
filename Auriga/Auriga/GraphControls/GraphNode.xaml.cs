@@ -9,7 +9,7 @@ namespace Auriga.GraphControls
     /// </summary>
     public partial class GraphNode : UserControl
     {
-        public Guid Id { get; }
+        public string Id { get; }
 
         public static readonly DependencyProperty NodeNameProperty =
             DependencyProperty.Register("NodeName", typeof(string), typeof(GraphNode));
@@ -31,9 +31,9 @@ namespace Auriga.GraphControls
 
         public GraphNode() : this("Default") { }
 
-        public GraphNode(string name) : this(Guid.NewGuid(), name) { }
+        public GraphNode(string name) : this(Guid.NewGuid().ToString(), name) { }
 
-        public GraphNode(Guid id, string name)
+        public GraphNode(string id, string name)
         {
             InitializeComponent();
             Id = id;

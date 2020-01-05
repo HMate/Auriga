@@ -56,14 +56,14 @@ namespace Auriga.Views
             {
                 Vector offset = new Vector(node.ActualWidth / 2.0, node.ActualHeight / 2.0);
                 Point pos = new Point(GetLeft(node), GetTop(node)) + offset;
-                graph.AddNode(node.Id, node.NodeName, pos);
+                graph.AddNode(new Node(node.Id, node.NodeName, pos));
             }
 
             foreach (GraphArrow arrow in GetChildren<GraphArrow>())
             {
                 if (arrow.StartNode == null || arrow.EndNode == null)
                     continue;
-                graph.AddEdge(arrow.StartNode.Id, arrow.EndNode.Id);
+                graph.AddEdge(new Edge(arrow.StartNode.Id, arrow.EndNode.Id));
             }
             return graph;
         }
@@ -106,7 +106,7 @@ namespace Auriga.Views
         /// <param name="viewport"></param>
         public void LoadGraph(Graph gr)
         {
-            Dictionary<Guid, GraphNode> nodes = new Dictionary<Guid, GraphNode>();
+            var nodes = new Dictionary<string, GraphNode>();
             foreach (var node in gr.Nodes)
             {
                 var nodeRect = AddNode(node.NodeName, node.Position);

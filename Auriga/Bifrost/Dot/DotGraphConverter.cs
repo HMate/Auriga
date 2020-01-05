@@ -40,13 +40,13 @@ namespace Bifrost.Dot
                     name = dotNode.Value.Attributes["label"];
                 }
 
-                Node n = result.AddNode(Guid.NewGuid(), name, p);
+                Node n = result.AddNode(new Node(Guid.NewGuid().ToString(), name, p));
                 nodes.Add(dotNode.Key, n);
             }
             foreach (var dotEdge in dot.Edges)
             {
                 (string start, string end) = dotEdge.Key;
-                result.AddEdge(nodes[start].Id, nodes[end].Id);
+                result.AddEdge(new Edge(nodes[start].Id, nodes[end].Id));
             }
             return result;
         }

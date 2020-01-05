@@ -8,27 +8,20 @@ namespace Bifrost.GraphElements
     {
         public ICollection<Node> Nodes { get; } = new List<Node>();
         public ICollection<Edge> Edges { get; } = new List<Edge>();
-
-        public Node AddNode(Guid id, string nodeName)
+        
+        public Node AddNode(Node node)
         {
-            Node n = new Node(id, nodeName);
-            Nodes.Add(n);
-            return n;
+            Nodes.Add(node);
+            return node;
         }
 
-        public Node AddNode(Guid id, string nodeName, Point pos)
+        public Edge AddEdge(Edge edge)
         {
-            Node n = new Node(id, nodeName, pos);
-            Nodes.Add(n);
-            return n;
+            Edges.Add(edge);
+            return edge;
         }
 
-        public void AddEdge(Guid startId, Guid endId)
-        {
-            Edges.Add(new Edge(startId, endId));
-        }
-
-        public Node? FindNode(Guid id)
+        public Node? FindNode(string id)
         {
             foreach (var node in Nodes)
             {
