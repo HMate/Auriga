@@ -13,7 +13,7 @@ namespace AurigaTest.GraphViz
         #region Dot -> Graph
 
         [Fact]
-        public void ConvertDotGraphToBifrostGraph()
+        public void DotToBifrostGraph()
         {
             DotGraph g = DotLoader.Load(@"digraph {
             graph [bb=""0, 0, 54, 108""];
@@ -44,7 +44,7 @@ namespace AurigaTest.GraphViz
         }
 
         [Fact]
-        public void ConvertDotGraphToBifrostGraphSingleNode()
+        public void DotToBifrostGraphSingleNode()
         {
             DotGraph g = DotLoader.Load(@"graph {a}");
             Graph graph = DotGraphConverter.ToGraph(g);
@@ -58,7 +58,7 @@ namespace AurigaTest.GraphViz
 
 
         [Fact]
-        public void ConvertDotGraphToBifrostGraphUseLabelForName()
+        public void DotToBifrostGraphUseLabelForName()
         {
             DotGraph g = DotLoader.Load(@"digraph {
             a[label=""good name""];
@@ -75,7 +75,7 @@ namespace AurigaTest.GraphViz
         #region Graph -> Dot
 
         [Fact]
-        public void ConvertBifrostGraphToDotGraphSingleNode()
+        public void BifrostToDotGraphSingleNode()
         {
             Graph g = new Graph();
             g.AddNode(new Node("054b46d7-6b2e-46a6-a7c3-16a31c9e1a53", "alpha"));
@@ -85,7 +85,7 @@ namespace AurigaTest.GraphViz
         }
 
         [Fact]
-        public void ConvertBifrostGraphToDotGraphSingleEdge()
+        public void BifrostToDotGraphSingleEdge()
         {
             Graph g = new Graph();
             g.AddNode(new Node("id1", "beta"));
