@@ -14,7 +14,7 @@ namespace Bifrost.Dot
         /// Creates a Graph from a DotGraph that contains "bb" graph property and "pos" properties for every node.
         /// </summary>
         /// <param name="dot"></param>
-        /// <returns><see cref="Graph"/>></returns>
+        /// <returns><see cref="Graph"/></returns>
         public static Graph ToGraph(DotGraph dot)
         {
             Graph result = new Graph();
@@ -33,7 +33,6 @@ namespace Bifrost.Dot
                     p = new Point(p.X, bb.Bottom - p.Y);
                 }
 
-                string id = dotNode.Key;
                 string name = dotNode.Key;
                 if(dotNode.Value.Attributes.ContainsKey("label"))
                 {

@@ -64,23 +64,84 @@ namespace AurigaTest.GraphViz
         public void SingleEdge()
         {
             DotGraph gr = new DotGraph();
-            var node = new DotNode();
-            node.Attributes.Add("label", "beta");
-            gr.Nodes.Add("7cbeb388-085b-4087-9fec-50d7f180e334", node);
-            node = new DotNode();
-            node.Attributes.Add("label", "delta");
-            gr.Nodes.Add("some id", node);
+            gr.Nodes.Add("abc", new DotNode() { Attributes = { ["label"] = "beta" } });
+            gr.Nodes.Add("some id", new DotNode() { Attributes = { ["label"] = "delta" } });
 
-            var edge = new DotEdge();
-            var edgeList = new List<DotEdge>();
-            edgeList.Add(edge);
-            gr.Edges.Add(("7cbeb388-085b-4087-9fec-50d7f180e334", "some id"), edgeList);
+            gr.Edges.Add(("abc", "some id"), new List<DotEdge> { new DotEdge() });
 
             string result = DotFileGenerator.Serialize(gr);
             Assert.Equal(@"digraph {
-""7cbeb388-085b-4087-9fec-50d7f180e334""[""label""=""beta""]
+""abc""[""label""=""beta""]
 ""some id""[""label""=""delta""]
-""7cbeb388-085b-4087-9fec-50d7f180e334"" -> ""some id""
+""abc"" -> ""some id""
+}", result, ignoreLineEndingDifferences: true, ignoreWhiteSpaceDifferences: true);
+        }
+
+        [Fact]
+        public void MultipleEdgeOnSameNodes()
+        {
+            DotGraph gr = new DotGraph();
+            gr.Nodes.Add("abc", new DotNode(){ Attributes = { ["label"] = "beta" }});
+            gr.Nodes.Add("some id", new DotNode(){ Attributes = { ["label"] = "delta" }});
+            gr.Nodes.Add("third", new DotNode(){ Attributes = { ["other label"] = "asd" }});
+
+            gr.Edges.Add(("abc", "some id"), new List<DotEdge> { new DotEdge(), new DotEdge(), new DotEdge() });
+
+            string result = DotFileGenerator.Serialize(gr);
+            Assert.Equal(@"digraph {
+""abc""[""label""=""beta""]
+""some id""[""label""=""delta""]
+""third""[""other label""=""asd""]
+""abc"" -> ""some id""
+""abc"" -> ""some id""
+""abc"" -> ""some id""
+}", result, ignoreLineEndingDifferences: true, ignoreWhiteSpaceDifferences: true);
+        }
+
+        [Fact]
+        public void EdgeAttributes()
+        {
+            DotGraph gr = new DotGraph();
+            gr.Nodes.Add("abc", new DotNode() { Attributes = { ["label"] = "beta" } });
+            gr.Nodes.Add("some id", new DotNode() { Attributes = { ["label"] = "delta" } });
+
+            gr.Edges.Add(("abc", "some id"), new List<DotEdge> { new DotEdge() { Attributes = { ["edgeAttr"] = "edgy" } } });
+
+            string result = DotFileGenerator.Serialize(gr);
+            Assert.Equal(@"digraph {
+""abc""[""label""=""beta""]
+""some id""[""label""=""delta""]
+""abc"" -> ""some id""[""edgeAttr""=""edgy""]
+}", result, ignoreLineEndingDifferences: true, ignoreWhiteSpaceDifferences: true);
+        }
+
+        [Fact]
+        public void GraphAttributes()
+        {
+            DotGraph gr = new DotGraph();
+            gr.GraphAttributes.Add("lex parse", "lorem");
+            gr.Nodes.Add("abc", new DotNode() { Attributes = { ["label"] = "beta" } });
+
+            string result = DotFileGenerator.Serialize(gr);
+            Assert.Equal(@"digraph {
+graph [""lex parse""=""lorem""]
+""abc""[""label""=""beta""]
+}", result, ignoreLineEndingDifferences: true, ignoreWhiteSpaceDifferences: true);
+        }
+
+        [Fact]
+        public void NodeAttributes()
+        {
+            DotGraph gr = new DotGraph();
+            gr.GraphAttributes.Add("lex parse", "lorem");
+            gr.NodeAttributes.Add("node attr", "somethg");
+            gr.Nodes.Add("abc", new DotNode() { Attributes = { ["label"] = "beta" } });
+
+            string result = DotFileGenerator.Serialize(gr);
+            Assert.Equal(@"digraph {
+graph [""lex parse""=""lorem""]
+node [""node attr""=""somethg""]
+""abc""[""label""=""beta""]
 }", result, ignoreLineEndingDifferences: true, ignoreWhiteSpaceDifferences: true);
         }
     }

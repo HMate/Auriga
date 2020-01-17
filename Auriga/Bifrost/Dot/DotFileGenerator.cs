@@ -10,13 +10,26 @@ namespace Bifrost.Dot
         {
             StringBuilder builder = new StringBuilder();
             builder.AppendLine("digraph {");
-            foreach(var node in gr.Nodes)
+            if(gr.GraphAttributes.Count > 0)
+            {
+                builder.AppendFormat("graph {0}\n", Serialize(gr.GraphAttributes));
+            }
+            if (gr.NodeAttributes.Count > 0)
+            {
+                builder.AppendFormat("node {0}\n", Serialize(gr.NodeAttributes));
+            }
+            foreach (var node in gr.Nodes)
             {
                 builder.AppendFormat("\"{0}\"{1}\n", node.Key, Serialize(node.Value.Attributes));
             }
-            foreach (var edge in gr.Edges)
+            foreach (var edgeGroup in gr.Edges)
             {
-                builder.AppendFormat("\"{0}\" -> \"{1}\"\n", edge.Key.Item1, edge.Key.Item2);
+                var nodeEdges = edgeGroup.Value;
+                foreach (var edge in nodeEdges)
+                {
+                    builder.AppendFormat("\"{0}\" -> \"{1}\"{2}\n", 
+                        edgeGroup.Key.Item1, edgeGroup.Key.Item2, Serialize(edge.Attributes));
+                }
             }
             builder.Append("}");
             return builder.ToString();

@@ -62,13 +62,17 @@ namespace Auriga.Views
         public void LoadDotString(string dotContent)
         {
             Graph gr = DotGraphConverter.ToGraph(DotLoader.Load(dotContent));
-            Rect viewport = GraphAreaZoom.Viewport;
+            adjustNodesToCenterOfViewport(gr, GraphAreaZoom.Viewport);
+            LoadGraph(gr);
+        }
+
+        private void adjustNodesToCenterOfViewport(Graph gr, Rect viewport)
+        {
             Vector viewportCenterOffset = new Vector(viewport.Left + viewport.Width / 2d, viewport.Top + viewport.Height / 2d);
             foreach (var node in gr.Nodes)
             {
                 node.Position += (Vector)node.Position + viewportCenterOffset;
             }
-            LoadGraph(gr);
         }
 
         public string SerializeGraphAsDotString()

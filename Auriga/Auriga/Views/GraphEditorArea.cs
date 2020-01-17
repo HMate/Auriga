@@ -103,7 +103,6 @@ namespace Auriga.Views
         /// Loads the given graph to the center of the viewport.
         /// </summary>
         /// <param name="gr"></param>
-        /// <param name="viewport"></param>
         public void LoadGraph(Graph gr)
         {
             var nodes = new Dictionary<string, GraphNode>();

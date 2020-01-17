@@ -280,6 +280,29 @@ namespace AurigaTest.GraphViz
                 c -- d;
                 c -- e;
             }");
+
+            // source: https://stamm-wilbrandt.de/GraphvizFiddle/#
+            DotGraph g3 = DotLoader.Load(@"graph minimal_nonplanar_graphs {
+                size=""4, 4""
+
+                URL = ""http://en.wikipedia.org/wiki/Kuratowski_theorem#Kuratowski_subgraphs""
+                tooltip = ""click for \""Kuratowski theorem\""""
+
+                labelloc = t           label = ""Minimal nonplanar graphs (9 edges / 5 nodes)""
+                node[style = filled]
+
+                subgraph cluster_0 {
+                    label = ""K_3,3""  color = lightblue  style = filled
+                    node[color = white]
+                    { A B C} -- { D E F}
+                }
+
+                subgraph cluster_1 {
+                    label = K_5  color = blue
+                    node[color = yellow  shape = box]
+                    1-- { 2-- { 3-- { 4-- 5} } }
+                }
+                }}");
         }
 
         [Fact]
