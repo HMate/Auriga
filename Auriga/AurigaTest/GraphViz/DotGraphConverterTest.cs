@@ -52,6 +52,7 @@ namespace AurigaTest.GraphViz
             var nodes = graph.Nodes.ToList();
 
             var nodeA = nodes[0];
+            Assert.Equal("a", nodeA.Id);
             Assert.Equal("a", nodeA.NodeName);
             Assert.Equal(new Point(0, 0), nodeA.Position);
         }
@@ -68,6 +69,7 @@ namespace AurigaTest.GraphViz
             var nodes = graph.Nodes.ToList();
 
             var nodeA = nodes[0];
+            Assert.Equal("a", nodeA.Id);
             Assert.Equal("good name", nodeA.NodeName);
         }
 
@@ -82,6 +84,25 @@ namespace AurigaTest.GraphViz
             DotGraph dot = DotGraphConverter.ToDot(g);
 
             assertDotContainsNode(dot, "054b46d7-6b2e-46a6-a7c3-16a31c9e1a53", "alpha");
+        }
+
+        /// <summary>
+        /// Dot files contain unique ids. Make sure that the converter generates a new id
+        /// if two nodes have the same id.
+        /// </summary>
+        [Fact]
+        public void BifrostToDotGraphDuplicatedNodeKey()
+        {
+            Graph g = new Graph();
+            g.AddNode(new Node("id1", "beta"));
+            g.AddNode(new Node("id2", "theta"));
+            g.AddNode(new Node("id1", "gamma"));
+            DotGraph dot = DotGraphConverter.ToDot(g);
+
+            assertDotContainsNode(dot, "id1", "beta");
+            assertDotContainsNode(dot, "id2", "theta");
+            assertDotContainsNode(dot, "id10", "gamma");
+            Assert.Equal(3, dot.Nodes.Count);
         }
 
         [Fact]

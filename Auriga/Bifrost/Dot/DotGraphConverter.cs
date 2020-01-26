@@ -25,21 +25,7 @@ namespace Bifrost.Dot
             Dictionary<string, Node> nodes = new Dictionary<string, Node>();
             foreach (var dotNode in dot.Nodes)
             {
-                Point p = new Point(0, 0);
-                if (dotNode.Value.Attributes.ContainsKey("pos"))
-                {
-                    p = Point.Parse(dotNode.Value.Attributes["pos"]);
-                    // Have to flip position, because WPF orig is leftop, graphviz is leftbot
-                    p = new Point(p.X, bb.Bottom - p.Y);
-                }
-
-                string name = dotNode.Key;
-                if(dotNode.Value.Attributes.ContainsKey("label"))
-                {
-                    name = dotNode.Value.Attributes["label"];
-                }
-
-                Node n = result.AddNode(new Node(Guid.NewGuid().ToString(), name, p));
+                Node n = result.AddNode(fromDotNode(dotNode.Key, dotNode.Value, bb));
                 nodes.Add(dotNode.Key, n);
             }
             foreach (var dotEdge in dot.Edges)
@@ -48,6 +34,25 @@ namespace Bifrost.Dot
                 result.AddEdge(new Edge(nodes[start].Id, nodes[end].Id));
             }
             return result;
+        }
+
+        private static Node fromDotNode(string nodeId, DotNode dotNode, Rect bb)
+        {
+            Point p = new Point(0, 0);
+            if (dotNode.Attributes.ContainsKey("pos"))
+            {
+                p = Point.Parse(dotNode.Attributes["pos"]);
+                // Have to flip position, because WPF orig is leftop, graphviz is leftbot
+                p = new Point(p.X, bb.Bottom - p.Y);
+            }
+
+            string name = nodeId;
+            if (dotNode.Attributes.ContainsKey("label"))
+            {
+                name = dotNode.Attributes["label"];
+            }
+
+            return new Node(nodeId, name, p);
         }
 
         private static Rect parseDotBoundingBox(string boundBoxString)
@@ -63,7 +68,8 @@ namespace Bifrost.Dot
             {
                 DotNode dotNode = new DotNode();
                 dotNode.Attributes.Add("label", node.NodeName);
-                result.Nodes.Add(node.Id.ToString(), dotNode);
+                var id = ensureUniqueId(result.Nodes, node.Id);
+                result.Nodes.Add(id, dotNode);
             }
             foreach (var edge in gr.Edges)
             {
@@ -76,6 +82,21 @@ namespace Bifrost.Dot
                 result.Edges[key].Add(dotEdge);
             }
             return result;
+        }
+
+        private static string ensureUniqueId(IDictionary<string, DotNode> nodes, string id)
+        {
+            if(!nodes.ContainsKey(id))
+            {
+                return id;
+            }
+            int counter = 0;
+            string candidate = string.Format("{0}{1}", id, counter);
+            while (nodes.ContainsKey(candidate))
+            {
+                candidate = string.Format("{0}{1}", id, counter);
+            }
+            return candidate;
         }
     }
 }

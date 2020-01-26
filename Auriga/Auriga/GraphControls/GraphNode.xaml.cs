@@ -29,10 +29,6 @@ namespace Auriga.GraphControls
             set { SetValue(IsSelectedProperty, value); }
         }
 
-        public GraphNode() : this("Default") { }
-
-        public GraphNode(string name) : this(Guid.NewGuid().ToString(), name) { }
-
         public GraphNode(string id, string name)
         {
             InitializeComponent();

@@ -108,7 +108,7 @@ namespace Auriga.Views
             var nodes = new Dictionary<string, GraphNode>();
             foreach (var node in gr.Nodes)
             {
-                var nodeRect = AddNode(node.NodeName, node.Position);
+                var nodeRect = AddNode(node.Id, node.NodeName, node.Position);
                 nodes.Add(node.Id, nodeRect);
             }
 
@@ -120,12 +120,12 @@ namespace Auriga.Views
 
         public GraphNode AddNode(Point pos)
         {
-            return AddNode("Default Name", pos);
+            return AddNode(Guid.NewGuid().ToString(), "Default Name", pos);
         }
 
-        public GraphNode AddNode(string name, Point pos)
+        public GraphNode AddNode(string id, string name, Point pos)
         {
-            var element = new GraphNode(name);
+            var element = new GraphNode(id, name);
 
             // Width, Height Are Nan here, ActualWidth/H are 0, so we force compute them
             element.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
