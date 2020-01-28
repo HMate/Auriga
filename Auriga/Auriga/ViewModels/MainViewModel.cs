@@ -27,6 +27,8 @@ namespace Auriga.ViewModels
 
         public ICommand ShowDotEditor => new RelayCommand(p => CurrentCentralView = new DotFileEditorView());
 
+        public ICommand ShowBrainfuckVisualizer => new RelayCommand(p => CurrentCentralView = new BrainfuckVisualizer());
+
         public event PropertyChangedEventHandler? PropertyChanged;
     }
 }

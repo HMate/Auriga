@@ -43,6 +43,7 @@ namespace Bifrost.GraphViz
                 {
                     System.Threading.Thread.Sleep(10);
                 }
+                proc.Kill();
             }
             if (errorOutput != "")
             {
