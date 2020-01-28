@@ -1,5 +1,6 @@
 ﻿using Bifrost.Dot;
 using Bifrost.GraphElements;
+using Bifrost.GraphViz;
 using Microsoft.Win32;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -61,7 +62,12 @@ namespace Auriga.Views
 
         public void LoadDotString(string dotContent)
         {
-            Graph gr = DotGraphConverter.ToGraph(DotLoader.Load(dotContent));
+            DotGraph dg = DotLoader.Load(dotContent);
+            if (!dg.GraphAttributes.ContainsKey("bb"))
+            {
+                dg = GraphVizWrapper.LayoutNodes(dg);
+            }
+            Graph gr = DotGraphConverter.ToGraph(dg);
             adjustNodesToCenterOfViewport(gr, GraphAreaZoom.Viewport);
             LoadGraph(gr);
         }
