@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using Xunit;
 
-namespace AurigaTest.GraphViz
+namespace AurigaTest.Dot
 {
     public class DotFileGeneratorTest
     {

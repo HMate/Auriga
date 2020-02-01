@@ -6,7 +6,7 @@ using System.Linq;
 using System.Windows;
 using Xunit;
 
-namespace AurigaTest.GraphViz
+namespace AurigaTest.Dot
 {
     public class DotGraphConverterTest
     {

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Xunit;
 
-namespace AurigaTest.GraphViz
+namespace AurigaTest.Dot
 {
     public class DotLoaderTest
     {
