@@ -12,7 +12,7 @@ namespace AurigaTest.Brainfuck
         public void ParseBrainfuckSymbols()
         {
             Parser parser = new Parser();
-            ASTRoot ast = parser.parse("<>+-.,[]");
+            ASTRoot ast = parser.Parse("<>+-.,[]");
             Assert.Equal(8, ast.Commands.Count);
             Assert.Equal(ASTCommandType.DecrementPointer, ast.Commands[0].Type);
             Assert.Equal(ASTCommandType.IncrementPointer, ast.Commands[1].Type);
@@ -28,7 +28,7 @@ namespace AurigaTest.Brainfuck
         public void IgnoreOtherSymbols()
         {
             Parser parser = new Parser();
-            ASTRoot ast = parser.parse(",+++. This program increments is input by 3");
+            ASTRoot ast = parser.Parse(",+++. This program increments is input by 3");
             Assert.Equal(5, ast.Commands.Count);
             Assert.Equal(ASTCommandType.ReadByte, ast.Commands[0].Type);
             Assert.Equal(ASTCommandType.Increment, ast.Commands[1].Type);

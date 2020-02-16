@@ -6,7 +6,7 @@ namespace Bifrost.Brainfuck
 {
     public class Parser
     {
-        public ASTRoot parse(string source)
+        public ASTRoot Parse(string source)
         {
             /* Brainfuck syntax:
              * List of valid symbols: > < + - . , [ ]

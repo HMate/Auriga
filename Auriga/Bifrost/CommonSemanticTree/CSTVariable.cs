@@ -11,8 +11,9 @@ namespace Bifrost.CommonSemanticTree
             Value = initValue;
         }
 
-        public string Name { get; }
-        public CSTType Type { get; }
-        public string Value { get; set; }
+        public string Name { get; set; }
+        public CSTType Type { get; set; }
+        public string Value { get; set; } = "";
+        public CSTBinding Binding { get; set; } = CSTBinding.Constant;
     }
 }

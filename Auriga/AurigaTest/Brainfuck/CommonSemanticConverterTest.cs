@@ -24,39 +24,71 @@ namespace AurigaTest.Brainfuck
          * like c = a+b
          * 
          * Operators can work on data, or on control flow.
+         * 
+         * Select 2 points in the code, and show all the possible paths between them? inputs outputs?
+         * Some paths in code contribute to some output. Some dont do anything.
+         * 
+         * metafunctions / functors? function that acts on the type of the input
          */
 
 
         [Fact]
-        public void ConvertSingleIncrement()
+        public void SingleIncrement()
         {
             Parser parser = new Parser();
-            ASTRoot ast = parser.parse("+");
-            CSTRoot csTree = CommonSemanticConverter.Convert(ast);
+            ASTRoot ast = parser.Parse("+");
+            CSTDataContext csTree = CommonSemanticConverter.Convert(ast);
 
             Assert.Single(csTree.Variables);
             Assert.Equal("a", csTree.Variables[0].Name);
             Assert.Equal("1", csTree.Variables[0].Value);
             Assert.Equal(CSTType.Number, csTree.Variables[0].Type);
+            Assert.Equal(CSTBinding.Constant, csTree.Variables[0].Binding);
         }
 
         [Fact]
-        public void ConvertMultipleIncrement()
+        public void MultipleIncrement()
         {
             Parser parser = new Parser();
-            ASTRoot ast = parser.parse("++++");
-            CSTRoot csTree = CommonSemanticConverter.Convert(ast);
+            ASTRoot ast = parser.Parse("++++");
+            CSTDataContext csTree = CommonSemanticConverter.Convert(ast);
 
             Assert.Single(csTree.Variables);
             Assert.Equal("a", csTree.Variables[0].Name);
+            Assert.Equal("4", csTree.Variables[0].Value);
         }
 
         [Fact]
-        public void ConvertIncrementPointer()
+        public void SingleDecrement()
         {
             Parser parser = new Parser();
-            ASTRoot ast = parser.parse(">");
-            CSTRoot csTree = CommonSemanticConverter.Convert(ast);
+            ASTRoot ast = parser.Parse("-");
+            CSTDataContext csTree = CommonSemanticConverter.Convert(ast);
+
+            Assert.Single(csTree.Variables);
+            Assert.Equal("a", csTree.Variables[0].Name);
+            Assert.Equal("-1", csTree.Variables[0].Value);
+            Assert.Equal(CSTType.Number, csTree.Variables[0].Type);
+        }
+
+        [Fact]
+        public void MultipleDecrement()
+        {
+            Parser parser = new Parser();
+            ASTRoot ast = parser.Parse("+++++-+---");
+            CSTDataContext csTree = CommonSemanticConverter.Convert(ast);
+
+            Assert.Single(csTree.Variables);
+            Assert.Equal("a", csTree.Variables[0].Name);
+            Assert.Equal("2", csTree.Variables[0].Value);
+        }
+
+        [Fact]
+        public void IncrementPointer()
+        {
+            Parser parser = new Parser();
+            ASTRoot ast = parser.Parse(">");
+            CSTDataContext csTree = CommonSemanticConverter.Convert(ast);
 
             Assert.Equal(2, csTree.Variables.Count);
             Assert.Equal("a", csTree.Variables[0].Name);
@@ -66,11 +98,11 @@ namespace AurigaTest.Brainfuck
         }
 
         [Fact]
-        public void ConvertIncrementPointerAndValue()
+        public void IncrementPointerAndValue()
         {
             Parser parser = new Parser();
-            ASTRoot ast = parser.parse(">+");
-            CSTRoot csTree = CommonSemanticConverter.Convert(ast);
+            ASTRoot ast = parser.Parse(">+");
+            CSTDataContext csTree = CommonSemanticConverter.Convert(ast);
 
             Assert.Equal(2, csTree.Variables.Count);
             Assert.Equal("a", csTree.Variables[0].Name);
@@ -80,11 +112,11 @@ namespace AurigaTest.Brainfuck
         }
 
         [Fact]
-        public void ConvertMultipleIncrementPointer()
+        public void MultipleIncrementPointer()
         {
             Parser parser = new Parser();
-            ASTRoot ast = parser.parse(">>>");
-            CSTRoot csTree = CommonSemanticConverter.Convert(ast);
+            ASTRoot ast = parser.Parse(">>>");
+            CSTDataContext csTree = CommonSemanticConverter.Convert(ast);
 
             Assert.Equal(4, csTree.Variables.Count);
             Assert.Equal("a", csTree.Variables[0].Name);
@@ -94,11 +126,11 @@ namespace AurigaTest.Brainfuck
         }
 
         [Fact]
-        public void ConvertIncDecPointer()
+        public void IncDecPointer()
         {
             Parser parser = new Parser();
-            ASTRoot ast = parser.parse("><");
-            CSTRoot csTree = CommonSemanticConverter.Convert(ast);
+            ASTRoot ast = parser.Parse("><");
+            CSTDataContext csTree = CommonSemanticConverter.Convert(ast);
 
             Assert.Equal(2, csTree.Variables.Count);
             Assert.Equal("a", csTree.Variables[0].Name);
@@ -106,15 +138,155 @@ namespace AurigaTest.Brainfuck
         }
 
         [Fact]
-        public void ConvertIncPointerToSame()
+        public void IncPointerToSame()
         {
             Parser parser = new Parser();
-            ASTRoot ast = parser.parse("><>");
-            CSTRoot csTree = CommonSemanticConverter.Convert(ast);
+            ASTRoot ast = parser.Parse("><>");
+            CSTDataContext csTree = CommonSemanticConverter.Convert(ast);
 
             Assert.Equal(2, csTree.Variables.Count);
             Assert.Equal("a", csTree.Variables[0].Name);
             Assert.Equal("b", csTree.Variables[1].Name);
+        }
+
+        [Fact]
+        public void LoadInput()
+        {
+            Parser parser = new Parser();
+            ASTRoot ast = parser.Parse(",");
+            CSTDataContext csTree = CommonSemanticConverter.Convert(ast);
+
+            Assert.Single(csTree.Variables);
+            Assert.Equal("a", csTree.Variables[0].Name);
+            Assert.Equal("a", csTree.Variables[0].Value);
+            Assert.Equal(CSTBinding.Dynamic, csTree.Variables[0].Binding);
+            Assert.Equal(CSTType.Number, csTree.Variables[0].Type);
+        }
+
+        [Fact]
+        public void LoadIncInput()
+        {
+            Parser parser = new Parser();
+            ASTRoot ast = parser.Parse(",+");
+            CSTDataContext csTree = CommonSemanticConverter.Convert(ast);
+
+            Assert.Single(csTree.Variables);
+            Assert.Equal("a", csTree.Variables[0].Name);
+            Assert.Equal("a+1", csTree.Variables[0].Value);
+        }
+
+        [Fact]
+        public void LoadIncManyInput()
+        {
+            Parser parser = new Parser();
+            ASTRoot ast = parser.Parse(",+++");
+            CSTDataContext csTree = CommonSemanticConverter.Convert(ast);
+
+            Assert.Single(csTree.Variables);
+            Assert.Equal("a", csTree.Variables[0].Name);
+            Assert.Equal("a+3", csTree.Variables[0].Value);
+        }
+
+        [Fact]
+        public void WriteDefaultOutput()
+        {
+            Parser parser = new Parser();
+            ASTRoot ast = parser.Parse(".");
+            CSTDataContext csTree = CommonSemanticConverter.Convert(ast);
+
+            Assert.Single(csTree.Outputs);
+            Assert.Equal("a", csTree.Outputs[0].Name);
+            Assert.Equal("0", csTree.Outputs[0].Value);
+        }
+
+        [Fact]
+        public void WriteStaticOutput()
+        {
+            Parser parser = new Parser();
+            ASTRoot ast = parser.Parse(">,+++.");
+            CSTDataContext csTree = CommonSemanticConverter.Convert(ast);
+
+            Assert.Single(csTree.Outputs);
+            Assert.Equal("b", csTree.Outputs[0].Name);
+            Assert.Equal("b+3", csTree.Outputs[0].Value);
+        }
+
+        [Fact]
+        public void WriteDynamicOutput()
+        {
+            Parser parser = new Parser();
+            ASTRoot ast = parser.Parse(">,+++.");
+            CSTDataContext csTree = CommonSemanticConverter.Convert(ast);
+
+            Assert.Single(csTree.Outputs);
+            Assert.Equal("b", csTree.Outputs[0].Name);
+            Assert.Equal("b+3", csTree.Outputs[0].Value);
+        }
+
+        [Fact]
+        public void EmptyLoop()
+        {
+            Parser parser = new Parser();
+            ASTRoot ast = parser.Parse("[]");
+            CSTDataContext csTree = CommonSemanticConverter.Convert(ast);
+
+            Assert.Single(csTree.Variables);
+            Assert.Equal("a", csTree.Variables[0].Name);
+            Assert.Equal("0", csTree.Variables[0].Value);
+        }
+
+        [Fact]
+        public void SkippedLoop()
+        {
+            Parser parser = new Parser();
+            ASTRoot ast = parser.Parse("[>+<+]++");
+            CSTDataContext csTree = CommonSemanticConverter.Convert(ast);
+
+            Assert.Single(csTree.Variables);
+            Assert.Equal("a", csTree.Variables[0].Name);
+            Assert.Equal("2", csTree.Variables[0].Value);
+        }
+
+        [Fact]
+        public void SkippedNestedLoop()
+        {
+            Parser parser = new Parser();
+            ASTRoot ast = parser.Parse("[>+<+[-]]++");
+            CSTDataContext csTree = CommonSemanticConverter.Convert(ast);
+
+            Assert.Single(csTree.Variables);
+            Assert.Equal("a", csTree.Variables[0].Name);
+            Assert.Equal("2", csTree.Variables[0].Value);
+        }
+
+        [Fact]
+        public void StaticLoop()
+        {
+            Parser parser = new Parser();
+            ASTRoot ast = parser.Parse("++++[->+<]");
+            CSTDataContext csTree = CommonSemanticConverter.Convert(ast);
+
+            Assert.Equal(2, csTree.Variables.Count);
+            assertVariable(new CSTVariable("a", CSTType.Number, "0"), csTree.Variables[0]);
+            assertVariable(new CSTVariable("b", CSTType.Number, "4"), csTree.Variables[1]);
+        }
+
+        [Fact]
+        public void DynamicLoop()
+        {
+            Parser parser = new Parser();
+            ASTRoot ast = parser.Parse(",[->+<]");
+            CSTDataContext csTree = CommonSemanticConverter.Convert(ast);
+
+            Assert.Equal(2, csTree.Variables.Count);
+            Assert.Equal("a", csTree.Variables[0].Name);
+            Assert.Equal("0", csTree.Variables[0].Value);
+        }
+
+        private static void assertVariable(CSTVariable expected, CSTVariable actual)
+        {
+            Assert.True(expected.Name == actual.Name, $"Variable names differ {expected.Name} != {actual.Name}");
+            Assert.True(expected.Value == actual.Value, $"Variable '{actual.Name}' values differ {expected.Value} != {actual.Value}");
         }
     }
 }
