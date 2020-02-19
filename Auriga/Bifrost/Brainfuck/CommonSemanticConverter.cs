@@ -27,6 +27,7 @@ namespace Bifrost.Brainfuck
         {
             CSTDataContext root = new CSTDataContext();
             CSTDataContext currentCtx = root;
+            InputNameGenerator inputGen = new InputNameGenerator();
             int pointerPos = 0;
             currentCtx.Variables.Add(new CSTVariable(generateName(pointerPos), CSTType.Number, "0"));
             var loops = new Stack<LoopContext>();
@@ -76,7 +77,7 @@ namespace Bifrost.Brainfuck
                     case ASTCommandType.ReadByte:
                         {
                             var variable = currentCtx.Variables[pointerPos];
-                            variable.Value = variable.Name;
+                            variable.Value = inputGen.GenerateInputName();
                             variable.Type = CSTType.Number;
                             variable.Binding = CSTBinding.Dynamic;
                         }
@@ -112,22 +113,23 @@ namespace Bifrost.Brainfuck
 
                             // Upon leaving the loop scope, we pass on the variable changes to the parent scope
                             // basic formula for every var: parentScopeValue = parentValueOriginal + loopCount * loopValueChange
+                            int loopCount = 1;
                             var loopExitVar = loop.Context.Variables[pointerPos];
-                            if (loopExitVar.Name == loop.EntryVar.Name)
+                            var loopEntry = loop.EntryVar;
+                            if (loopExitVar.Name == loopEntry.Name)
                             {
                                 if (loopExitVar.Binding == CSTBinding.Constant &&
-                                    loop.EntryVar.Binding == CSTBinding.Constant)
+                                    loopEntry.Binding == CSTBinding.Constant)
                                 {
-                                    var c0 = int.Parse(loop.EntryVar.Value);
+                                    var c0 = int.Parse(loopEntry.Value);
                                     var c1 = int.Parse(loopExitVar.Value);
                                     // c0 + x*c1 = 0 (mod 256) if x not in Z, then infinit loop
 
                                     var value = c0 + c1;
-                                    var count = 1;
                                     while (mod8bit(value) != 0)
                                     {
                                         value += c1;
-                                        count++;
+                                        loopCount++;
                                         if (c0 == value)
                                         {
                                             // TODO: infinite loop
@@ -138,39 +140,55 @@ namespace Bifrost.Brainfuck
                                     // TODO: Do this computation mathematically
                                     //(256 - c0) / c1 (mod 256) in Z 
                                     //(256-c0) % c1 == 0 
-
-                                    foreach (var loopVar in loop.Context.Variables)
-                                    {
-                                        var scopeVar = currentCtx.GetVariable(loopVar.Name);
-                                        if(scopeVar == null)
-                                        {
-                                            var loopValue = int.Parse(loopVar.Value);
-                                            scopeVar = new CSTVariable(loopVar.Name, CSTType.Number, (loopValue * count).ToString());
-                                            scopeVar.Binding = loopVar.Binding;
-                                            currentCtx.Variables.Add(scopeVar);
-                                        }
-                                        else if (scopeVar.Binding == CSTBinding.Constant && loopVar?.Binding == CSTBinding.Constant)
-                                        {
-                                            var loopValue = int.Parse(loopVar.Value);
-                                            scopeVar.Value = (int.Parse(scopeVar.Value) + (loopValue * count)).ToString();
-                                        }
-                                        else
-                                        {
-                                            // TODO: either outside or inside loop the variable is dynamic
-                                        }
-                                    }
                                 }
-                                else if (loopExitVar.Binding == CSTBinding.Dynamic)
+                                else if (loopExitVar.Binding == CSTBinding.Constant &&
+                                    loopEntry.Binding == CSTBinding.Dynamic)
                                 {
-                                    // every touched variable becomes dependent on the dynamic value
+                                    throw new NotImplementedException();
+                                    // TODO loopCount is a string here like input0/3
+                                }
+                                else if (loopExitVar.Binding == CSTBinding.Dynamic &&
+                                    loopEntry.Binding == CSTBinding.Constant)
+                                {
+                                    // we read the loop variable inside the loop somehow -> not *
+                                    throw new NotImplementedException();
+                                }
+                                else
+                                {
+                                    // loop variable was dynamic input, and also read in its value in the loop -> not *
+                                    throw new NotImplementedException();
                                 }
                             }
                             else
                             {
                                 // If loop start and end var differs -> its doing a variable search?
                                 // sliding the pointer until reaches a 0 variable
+                                throw new NotImplementedException();
                             }
-                            
+
+                            foreach (var loopVar in loop.Context.Variables)
+                            {
+                                var scopeVar = currentCtx.GetVariable(loopVar.Name);
+                                if (scopeVar == null)
+                                {
+                                    // this varaible wasnt in parent scope, push it to there with current value
+                                    var loopValue = int.Parse(loopVar.Value);
+                                    scopeVar = new CSTVariable(loopVar.Name, CSTType.Number, (loopValue * loopCount).ToString());
+                                    scopeVar.Binding = loopVar.Binding;
+                                    currentCtx.Variables.Add(scopeVar);
+                                }
+                                else if (scopeVar.Binding == CSTBinding.Constant && loopVar?.Binding == CSTBinding.Constant)
+                                {
+                                    var loopValue = int.Parse(loopVar.Value);
+                                    scopeVar.Value = (int.Parse(scopeVar.Value) + (loopValue * loopCount)).ToString();
+                                }
+                                else
+                                {
+                                    // TODO: either outside or inside loop the variable is dynamic
+                                    throw new NotImplementedException();
+                                }
+                            }
+
                             // We only leave a loop if the exit var is 0
                             var curVar = currentCtx.Variables[pointerPos];
                             curVar.Value = "0";
@@ -191,13 +209,21 @@ namespace Bifrost.Brainfuck
                 variable.Value = (int.Parse(oldVal) + value).ToString();
             else
             {
-                string staticValue = value.ToString();
+                string staticValue = value.ToString("+#;-#;0");
+                string dynamicValue = variable.Value;
                 if (oldVal.Contains("+"))
                 {
                     string[] parts = oldVal.Split("+");
-                    staticValue = (int.Parse(parts[1]) + value).ToString();
+                    dynamicValue = parts[0];
+                    staticValue = (int.Parse(parts[1]) + value).ToString("+#;-#;0");
                 }
-                variable.Value = variable.Name + "+" + staticValue;
+                else if(oldVal.Contains("-"))
+                {
+                    string[] parts = oldVal.Split("-");
+                    dynamicValue = parts[0];
+                    staticValue = (-int.Parse(parts[1]) + value).ToString("+#;-#;0");
+                }
+                variable.Value = dynamicValue + staticValue;
             }
         }
 
@@ -211,6 +237,17 @@ namespace Bifrost.Brainfuck
         {
             string result = Char.ConvertFromUtf32('a' + index);
             return result;
+        }
+
+        private class InputNameGenerator
+        {
+            private int index = 0;
+            public string GenerateInputName()
+            {
+                string result = "input" + index;
+                index++;
+                return result;
+            }
         }
     }
 }

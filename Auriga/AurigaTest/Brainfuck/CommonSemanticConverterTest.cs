@@ -158,7 +158,7 @@ namespace AurigaTest.Brainfuck
 
             Assert.Single(csTree.Variables);
             Assert.Equal("a", csTree.Variables[0].Name);
-            Assert.Equal("a", csTree.Variables[0].Value);
+            Assert.Equal("input0", csTree.Variables[0].Value);
             Assert.Equal(CSTBinding.Dynamic, csTree.Variables[0].Binding);
             Assert.Equal(CSTType.Number, csTree.Variables[0].Type);
         }
@@ -172,11 +172,11 @@ namespace AurigaTest.Brainfuck
 
             Assert.Single(csTree.Variables);
             Assert.Equal("a", csTree.Variables[0].Name);
-            Assert.Equal("a+1", csTree.Variables[0].Value);
+            Assert.Equal("input0+1", csTree.Variables[0].Value);
         }
 
         [Fact]
-        public void LoadIncManyInput()
+        public void LoadInputIncMany()
         {
             Parser parser = new Parser();
             ASTRoot ast = parser.Parse(",+++");
@@ -184,7 +184,19 @@ namespace AurigaTest.Brainfuck
 
             Assert.Single(csTree.Variables);
             Assert.Equal("a", csTree.Variables[0].Name);
-            Assert.Equal("a+3", csTree.Variables[0].Value);
+            Assert.Equal("input0+3", csTree.Variables[0].Value);
+        }
+
+        [Fact]
+        public void LoadInputDecMany()
+        {
+            Parser parser = new Parser();
+            ASTRoot ast = parser.Parse(",---");
+            CSTDataContext csTree = CommonSemanticConverter.Convert(ast);
+
+            Assert.Single(csTree.Variables);
+            Assert.Equal("a", csTree.Variables[0].Name);
+            Assert.Equal("input0-3", csTree.Variables[0].Value);
         }
 
         [Fact]
@@ -203,12 +215,12 @@ namespace AurigaTest.Brainfuck
         public void WriteStaticOutput()
         {
             Parser parser = new Parser();
-            ASTRoot ast = parser.Parse(">,+++.");
+            ASTRoot ast = parser.Parse(">+++.");
             CSTDataContext csTree = CommonSemanticConverter.Convert(ast);
 
             Assert.Single(csTree.Outputs);
             Assert.Equal("b", csTree.Outputs[0].Name);
-            Assert.Equal("b+3", csTree.Outputs[0].Value);
+            Assert.Equal("3", csTree.Outputs[0].Value);
         }
 
         [Fact]
@@ -220,7 +232,7 @@ namespace AurigaTest.Brainfuck
 
             Assert.Single(csTree.Outputs);
             Assert.Equal("b", csTree.Outputs[0].Name);
-            Assert.Equal("b+3", csTree.Outputs[0].Value);
+            Assert.Equal("input0+3", csTree.Outputs[0].Value);
         }
 
         [Fact]
@@ -281,6 +293,8 @@ namespace AurigaTest.Brainfuck
             Assert.Equal(2, csTree.Variables.Count);
             Assert.Equal("a", csTree.Variables[0].Name);
             Assert.Equal("0", csTree.Variables[0].Value);
+            Assert.Equal("b", csTree.Variables[0].Name);
+            Assert.Equal("input0", csTree.Variables[0].Value);
         }
 
         private static void assertVariable(CSTVariable expected, CSTVariable actual)
