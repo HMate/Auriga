@@ -283,20 +283,6 @@ namespace AurigaTest.Brainfuck
             assertVariable(new CSTVariable("b", CSTType.Number, "4"), csTree.Variables[1]);
         }
 
-        [Fact]
-        public void DynamicLoop()
-        {
-            Parser parser = new Parser();
-            ASTRoot ast = parser.Parse(",[->+<]");
-            CSTDataContext csTree = CommonSemanticConverter.Convert(ast);
-
-            Assert.Equal(2, csTree.Variables.Count);
-            Assert.Equal("a", csTree.Variables[0].Name);
-            Assert.Equal("0", csTree.Variables[0].Value);
-            Assert.Equal("b", csTree.Variables[0].Name);
-            Assert.Equal("input0", csTree.Variables[0].Value);
-        }
-
         private static void assertVariable(CSTVariable expected, CSTVariable actual)
         {
             Assert.True(expected.Name == actual.Name, $"Variable names differ {expected.Name} != {actual.Name}");

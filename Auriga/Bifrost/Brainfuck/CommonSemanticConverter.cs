@@ -162,7 +162,7 @@ namespace Bifrost.Brainfuck
                             else
                             {
                                 // If loop start and end var differs -> its doing a variable search?
-                                // sliding the pointer until reaches a 0 variable
+                                // sliding the pointer until reaches a 0 variable -> can be an if()
                                 throw new NotImplementedException();
                             }
 
